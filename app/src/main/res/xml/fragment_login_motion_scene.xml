@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Transition
+            app:constraintSetStart="@layout/fragment_login_scene_main"
+            app:constraintSetEnd="@layout/fragment_login_scene_login"
+            app:duration="1000">
+        <OnClick
+                app:clickAction="toggle"
+                app:targetId="@id/btn_login_login"/>
+    </Transition>
+
+</MotionScene>
