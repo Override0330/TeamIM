@@ -12,7 +12,7 @@ import com.override0330.teamim.BR
 import com.override0330.teamim.R
 import com.override0330.teamim.databinding.RecyclerviewItemTaskBinding
 import com.override0330.teamim.model.bean.TaskItem
-import com.override0330.teamim.model.db.Task
+import com.override0330.teamim.model.db.TaskDB
 
 /**
  * @data 2019-08-16
@@ -21,7 +21,7 @@ import com.override0330.teamim.model.db.Task
  */
 
 
-class TaskPagingAdapter:PagedListAdapter<Task,TaskPagingAdapter.ViewHolder>(diffCallback){
+class TaskPagingAdapter:PagedListAdapter<TaskDB,TaskPagingAdapter.ViewHolder>(diffCallback){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val dataBinding = DataBindingUtil.inflate<RecyclerviewItemTaskBinding>(LayoutInflater.from(parent.context),R.layout.recyclerview_item_task,parent,false)
         return ViewHolder(dataBinding)
@@ -35,22 +35,22 @@ class TaskPagingAdapter:PagedListAdapter<Task,TaskPagingAdapter.ViewHolder>(diff
     }
 
     class ViewHolder(private val dataBinding: ViewDataBinding):RecyclerView.ViewHolder(dataBinding.root){
-        fun onBind(task: Task){
+        fun onBind(taskDB: TaskDB){
             val itemData = TaskItem()
-            Log.d("ViewHolder", task.taskName)
-            itemData.taskName.set(task.taskName)
+            Log.d("ViewHolder", taskDB.taskName)
+            itemData.taskName.set(taskDB.taskName)
             itemData.taskAvatar.set("https://avatars3.githubusercontent.com/u/40203754?s=460&v=4")
-            itemData.taskDetail.set(task.taskDetail)
+            itemData.taskDetail.set(taskDB.taskDetail)
             dataBinding.setVariable(BR.taskItem,itemData)
         }
     }
 
     companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<Task>() {
-            override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean =
+        private val diffCallback = object : DiffUtil.ItemCallback<TaskDB>() {
+            override fun areItemsTheSame(oldItem: TaskDB, newItem: TaskDB): Boolean =
                 oldItem.taskId == newItem.taskId
 
-            override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean =
+            override fun areContentsTheSame(oldItem: TaskDB, newItem: TaskDB): Boolean =
                 areItemsTheSame(oldItem,newItem)
         }
     }

@@ -12,11 +12,15 @@ import com.override0330.teamim.model.bean.User
  * @description
  */
 
+@Entity(tableName = "update_time")
+class UpdateTime(@PrimaryKey val tableName:String,
+                val updateTime:String)
+
 @Entity(tableName = "task_item")
-class Task(@PrimaryKey(autoGenerate = true) var taskId:Int,
-           var taskName: String,
-           var taskAvatar: String,
-           var taskDetail: String){
+class TaskDB(@PrimaryKey(autoGenerate = true) var taskId:Int,
+             var taskName: String,
+             var taskAvatar: String,
+             var taskDetail: String){
     @Ignore
     lateinit var contributors: List<User>
     @Ignore
@@ -26,8 +30,20 @@ class Task(@PrimaryKey(autoGenerate = true) var taskId:Int,
 }
 
 @Entity(tableName = "message")
-class Message(@PrimaryKey(autoGenerate = true) val messageId:Int,
+class MessageDB(@PrimaryKey(autoGenerate = true) val messageId:Int,
                 val sendUser:String,
-              val sendToUser:String,
-              val sendTime:String,
-              val sendContent:String)
+                val sendToUser:String,
+                val sendTime:String,
+                val sendContent:String)
+
+@Entity(tableName = "contact")
+class ContactDB(@PrimaryKey val userId: String,
+                val userName: String,
+                val avatar: String,
+                val geQian:String)
+
+@Entity(tableName = "userId")
+class UserDB(@PrimaryKey val userId: String,
+             val userName: String,
+             val avatar: String,
+             val geQian:String)

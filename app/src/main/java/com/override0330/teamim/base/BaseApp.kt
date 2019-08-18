@@ -1,7 +1,6 @@
-package com.override0330.teamim
+package com.override0330.teamim.base
 
 import android.app.Application
-import android.content.Context
 import cn.leancloud.AVLogger
 import cn.leancloud.AVOSCloud
 
@@ -13,9 +12,6 @@ import cn.leancloud.AVOSCloud
 
 
 class BaseApp : Application(){
-
-
-
     override fun onCreate() {
         super.onCreate()
         baseApp = this

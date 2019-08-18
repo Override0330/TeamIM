@@ -7,8 +7,17 @@ package com.override0330.teamim.net
  */
 
 
-class LearnCloudNetHelper {
+class LearnCloudNetHelper private constructor(){
     companion object{
-
+        private var learnCloudNetHelper:LearnCloudNetHelper? = null
+        @Synchronized
+        fun getInstant():LearnCloudNetHelper{
+            if (learnCloudNetHelper==null){
+                learnCloudNetHelper = LearnCloudNetHelper()
+            }
+            return learnCloudNetHelper!!
+        }
     }
+
+    var isLoginToIMClient = false
 }

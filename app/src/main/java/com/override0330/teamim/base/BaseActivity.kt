@@ -1,4 +1,4 @@
-package com.override0330.teamim.view
+package com.override0330.teamim.base
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity

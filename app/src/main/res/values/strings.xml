@@ -5,4 +5,8 @@
     <string name="teamim">TeamIM</string>
     <string name="search">\t搜索</string>
     <string name="contacts">联系人</string>
+    <string name="addToContact">添加到通讯录</string>
+    <string name="geQian">个性签名</string>
+    <string name="ingTask">正在进行的任务</string>
+    <string name="overTask">已经完成的任务</string>
 </resources>

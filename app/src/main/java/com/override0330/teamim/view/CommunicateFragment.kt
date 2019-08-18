@@ -1,13 +1,13 @@
 package com.override0330.teamim.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.override0330.teamim.R
+import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.view.adapter.CommunitcatePagingAdapter
 import com.override0330.teamim.viewmodel.CommunitcateViewModel
 import kotlinx.android.synthetic.main.fragment_communicate_main.*
@@ -34,8 +34,9 @@ class CommunicateFragment : BaseViewModelFragment<CommunitcateViewModel>() {
         rv_message_list.adapter = adapter
         rv_message_list.layoutManager = LinearLayoutManager(this.context)
         viewModel.getRefreshLiveData().observe(viewLifecycleOwner, Observer {
-            Log.d("回调测试","${it.size}")
+            //应该判断是否更新，因为这个会重新绘制视图
             adapter.submitList(it)
         })
+
     }
 }

@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.override0330.teamim.BaseApp
+import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.R
-import com.override0330.teamim.view.adapter.CommunitcatePagingAdapter
+import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.view.adapter.TaskPagingAdapter
 import com.override0330.teamim.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.fragment_task_main.*

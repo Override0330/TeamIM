@@ -3,11 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/colorLitterGray</item>
     </style>
     <style name="MyToolbarTitleText" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="android:windowBackground">@drawable/test2</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+    </style>
 </resources>

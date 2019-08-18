@@ -6,7 +6,6 @@ package com.override0330.teamim.view.adapter
  * @description
  */
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -14,18 +13,16 @@ import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import cn.leancloud.utils.LogUtil
 import com.override0330.teamim.BR
 import com.override0330.teamim.R
 import com.override0330.teamim.databinding.*
 import com.override0330.teamim.model.bean.MessageItem
-import com.override0330.teamim.model.db.Message
+import com.override0330.teamim.model.db.MessageDB
 
 
-class CommunitcatePagingAdapter:PagedListAdapter<Message,CommunitcatePagingAdapter.ViewHolder>(diffCallback){
+class CommunitcatePagingAdapter:PagedListAdapter<MessageDB,CommunitcatePagingAdapter.ViewHolder>(diffCallback){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val dataBinding = DataBindingUtil.inflate<RecyclerviewItemMessageBinding>(LayoutInflater.from(parent.context),R.layout.recyclerview_item_message,parent,false)
-        Log.d("debug","创建ViewHolder")
         return ViewHolder(dataBinding)
     }
 
@@ -37,24 +34,23 @@ class CommunitcatePagingAdapter:PagedListAdapter<Message,CommunitcatePagingAdapt
     }
 
     class ViewHolder(private val dataBinding: ViewDataBinding):RecyclerView.ViewHolder(dataBinding.root){
-        fun onBind(message: Message){
+        fun onBind(messageDB: MessageDB){
             val messageItem = MessageItem()
-            Log.d("ViewHolder", message.sendContent)
             with(messageItem){
-                messageName.set(message.sendUser)
-                messageDetail.set(message.sendContent)
-                messageTime.set(message.sendTime)
+                messageName.set(messageDB.sendUser)
+                messageDetail.set(messageDB.sendContent)
+                messageTime.set(messageDB.sendTime)
             }
             dataBinding.setVariable(BR.messageItem,messageItem)
         }
     }
 
     companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<Message>() {
-            override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean =
+        private val diffCallback = object : DiffUtil.ItemCallback<MessageDB>() {
+            override fun areItemsTheSame(oldItem: MessageDB, newItem: MessageDB): Boolean =
                 oldItem.sendContent == newItem.sendContent
 
-            override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean =
+            override fun areContentsTheSame(oldItem: MessageDB, newItem: MessageDB): Boolean =
                 areItemsTheSame(oldItem,newItem)
         }
     }

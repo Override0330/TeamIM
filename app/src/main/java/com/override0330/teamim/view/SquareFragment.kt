@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.override0330.teamim.R
+import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.viewmodel.SquareViewModel
 
 /**

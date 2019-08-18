@@ -1,4 +1,4 @@
-package com.override0330.teamim.viewmodel
+package com.override0330.teamim.base
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel

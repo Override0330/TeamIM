@@ -1,4 +1,4 @@
-package com.override0330.teamim.view.adapter
+package com.override0330.teamim.base
 
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +20,7 @@ class BaseRecyclerViewAdapter<T:ViewDataBinding,V>(private val resourceId:Int,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder<V> {
         val dataBinding = DataBindingUtil.inflate<T>(LayoutInflater.from(parent.context),resourceId,parent,false)
         dataBinding.root.setOnClickListener(this)
-        return DataBindingViewHolder(dataBinding,dataBindingId)
+        return DataBindingViewHolder(dataBinding, dataBindingId)
     }
 
     override fun getItemCount(): Int {
