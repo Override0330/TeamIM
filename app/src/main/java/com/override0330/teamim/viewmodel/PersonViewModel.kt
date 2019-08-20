@@ -1,6 +1,7 @@
 package com.override0330.teamim.viewmodel
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -21,7 +22,7 @@ import io.reactivex.disposables.Disposable
 
 
 class PersonViewModel : BaseViewModel(){
-    val userRepository = UserRepository()
+    val userRepository = UserRepository.getInstant()
 
     lateinit var userId:String
 
@@ -34,7 +35,7 @@ class PersonViewModel : BaseViewModel(){
 
             override fun onSubscribe(d: Disposable) {}
 
-            override fun onNext(t: com.alibaba.fastjson.JSONObject) {
+            override fun onNext(t: JSONObject) {
                 state.postValue(ConnectStat.SUCCESS)
             }
             override fun onError(e: Throwable) {
@@ -46,23 +47,16 @@ class PersonViewModel : BaseViewModel(){
         return state
     }
 
-
-    //拿到个人信息
-    fun getUserById(userId:String):LiveData<AVObject>{
-        val data = MutableLiveData<AVObject>()
-        userRepository.getObjectById("_User",userId).observe(lifecycleOwner,androidx.lifecycle.Observer {
-            data.postValue(it)
-        })
-        return data
-    }
-
     //判断是否联系人
     fun isContact(userId:String):MutableLiveData<Boolean>{
         val data = MutableLiveData<Boolean>()
+        data.value = false
         userRepository.getContactList(lifecycleOwner).observe(lifecycleOwner, Observer {
             if (it.map { it.userId }.contains(userId)){
+                Log.d("debug","在通讯录内")
                 data.postValue(true)
             }else{
+                Log.d("debug","不在通讯录内")
                 data.postValue(false)
             }
         })

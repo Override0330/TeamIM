@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.leancloud.AVQuery
 import cn.leancloud.AVUser
+import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -17,6 +18,7 @@ import io.reactivex.disposables.Disposable
 
 
 class AddFriendViewModel : BaseViewModel() {
+    val userRepository = UserRepository.getInstant()
     fun getUserByName(userName: String): LiveData<List<AVUser>> {
         val result = MutableLiveData<List<AVUser>>()
         val query = AVQuery<AVUser>("_User")

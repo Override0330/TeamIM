@@ -78,7 +78,7 @@ class LoginRegisterViewModel : BaseViewModel(){
                 with(NowUser.getInstant()){
                     nowAVuser = t
                     //直接登录IM服务器
-                    nowClient = AVIMClient.getInstance(nowAVuser)
+                    nowClient = AVIMClient.getInstance(t)
                     nowClient.open(object :AVIMClientCallback(){
                         override fun done(client: AVIMClient?, e: AVIMException?) {
                             if (e == null) {

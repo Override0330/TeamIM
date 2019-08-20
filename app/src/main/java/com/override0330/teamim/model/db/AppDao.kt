@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 /**
@@ -15,16 +16,10 @@ import androidx.room.Query
 @Dao
 interface AppDao {
     //增
-    @Insert
-    fun insertTask(taskDB: TaskDB)
-
-    @Insert
-    fun insertTask(taskDBList: List<TaskDB>)
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertMessage(messageDB: MessageDB)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertMessage(messageDB: List<MessageDB>)
 
     @Insert
@@ -33,22 +28,25 @@ interface AppDao {
     @Insert
     fun insertUser(userDBList: List<UserDB>)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertContact(user: List<ContactDB>)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertContact(user: ContactDB)
 
-    @Insert
-    fun insertUpdateTime(time: UpdateTime)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertConversation(conversationDB: ConversationDB)
 
 
     //查
-    @Query("SELECT * FROM task_item ")
-    fun getAllTask():DataSource.Factory<Int,TaskDB>
+    @Query("SELECT * FROM message WHERE conversationId =:conversationId ORDER BY timestamp ASC")
+    fun getAllMessageById(conversationId:String):LiveData<List<MessageDB>>
 
-    @Query("SELECT * FROM message")
-    fun getAllMessage():DataSource.Factory<Int,MessageDB>
+    @Query("SELECT * FROM conversation ORDER BY updateTime DESC")
+    fun getAllConversation():LiveData<List<ConversationDB>>
+
+    @Query("SELECT * FROM conversation WHERE conversationId =:id")
+    fun getConversationById(id:String):ConversationDB
 
     @Query("SELECT * FROM contact")
     fun getAllContactDataSource():DataSource.Factory<Int,ContactDB>
@@ -56,6 +54,6 @@ interface AppDao {
     @Query("SELECT * FROM contact")
     fun getAllContactList():LiveData<List<ContactDB>>
 
-    @Query("SELECT * FROM update_time WHERE tableName =:tableName")
-    fun getTableUpdateTime(tableName:String):UpdateTime
+    @Query("SELECT * FROM contact WHERE userId =:userId")
+    fun getUserFromContactById(userId:String):ContactDB
 }

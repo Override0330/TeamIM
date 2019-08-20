@@ -1,10 +1,8 @@
 package com.override0330.teamim.model.db
 
-import androidx.databinding.ObservableField
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.override0330.teamim.model.bean.User
+import androidx.room.TypeConverters
 
 /**
  * @data 2019-08-16
@@ -12,38 +10,34 @@ import com.override0330.teamim.model.bean.User
  * @description
  */
 
-@Entity(tableName = "update_time")
-class UpdateTime(@PrimaryKey val tableName:String,
-                val updateTime:String)
 
-@Entity(tableName = "task_item")
-class TaskDB(@PrimaryKey(autoGenerate = true) var taskId:Int,
-             var taskName: String,
-             var taskAvatar: String,
-             var taskDetail: String){
-    @Ignore
-    lateinit var contributors: List<User>
-    @Ignore
-    var mainPercent= 0F
-    @Ignore
-    var datePercent= 0F
-}
-
+//储存所有的消息
 @Entity(tableName = "message")
-class MessageDB(@PrimaryKey(autoGenerate = true) val messageId:Int,
-                val sendUser:String,
-                val sendToUser:String,
-                val sendTime:String,
+@TypeConverters(UserConverter::class)
+class MessageDB(@PrimaryKey val messageId:String,
+                val from:String,
+                val conversationId:String,
+                val timestamp:Long,
                 val sendContent:String)
 
+//存放对话的table、包括群聊、单聊
+@Entity(tableName = "conversation")
+@TypeConverters(StringListConverter::class)
+class ConversationDB(@PrimaryKey var conversationId: String,
+                     var title:String,
+                     var member: List<String>,
+                     var avatar: String,
+                     var updateTime: Long,
+                     var lastMessage: String)
+
+//本地存储的联系人
 @Entity(tableName = "contact")
 class ContactDB(@PrimaryKey val userId: String,
                 val userName: String,
                 val avatar: String,
                 val geQian:String)
 
-@Entity(tableName = "userId")
-class UserDB(@PrimaryKey val userId: String,
-             val userName: String,
-             val avatar: String,
-             val geQian:String)
+//本地存储的用户
+@Entity(tableName = "user")
+class UserDB (@PrimaryKey var objects:String,
+              var userName:String, var geQian:String, var avatar:String)

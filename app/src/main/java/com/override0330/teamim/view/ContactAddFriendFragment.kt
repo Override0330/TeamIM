@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_add_friend.*
  */
 
 
-class AddFriendFragment : BaseViewModelFragment<AddFriendViewModel>(){
+class ContactAddFriendFragment : BaseViewModelFragment<AddFriendViewModel>(){
     override val viewModelClass: Class<AddFriendViewModel>
         get() = AddFriendViewModel::class.java
 
@@ -38,8 +38,7 @@ class AddFriendFragment : BaseViewModelFragment<AddFriendViewModel>(){
                 viewModel.getUserByName(et_add_search.text.toString()).observe(viewLifecycleOwner, Observer {
                     Toast.makeText(this.context,"查询到用户 ${it.size} 个",Toast.LENGTH_SHORT).show()
                     if (it.isNotEmpty()){
-//                        EventBus.getDefault().postSticky(PostAVuser(it[0]))
-                        val args = AddFriendFragmentArgs.Builder(it[0].objectId).build().toBundle()
+                        val args = ContactAddFriendFragmentArgs.Builder(it[0].objectId).build().toBundle()
                         findNavController().navigate(R.id.action_addFriendFragment_to_personFragment,args)
                     }
                 })
@@ -47,8 +46,5 @@ class AddFriendFragment : BaseViewModelFragment<AddFriendViewModel>(){
             }
             return@setOnEditorActionListener false
         }
-    }
-    fun getTheResult(){
-        //这里只可以通过搜索id来进行精确添加，输入id后应该可以按下回车键进行搜索，如果有结果直接跳向个人主页
     }
 }

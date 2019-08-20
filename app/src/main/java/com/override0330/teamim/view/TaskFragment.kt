@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseViewModelFragment
-import com.override0330.teamim.view.adapter.TaskPagingAdapter
 import com.override0330.teamim.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.fragment_task_main.*
 
@@ -23,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_task_main.*
 class TaskFragment : BaseViewModelFragment<TaskViewModel>(){
     override val viewModelClass: Class<TaskViewModel>
         get() = TaskViewModel::class.java
-    val adapter = TaskPagingAdapter()
+//    val adapter = TaskHomePagingAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -32,10 +30,10 @@ class TaskFragment : BaseViewModelFragment<TaskViewModel>(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rv_task_main.adapter = adapter
+//        rv_task_main.adapter = adapter
         rv_task_main.layoutManager = LinearLayoutManager(BaseApp.context())
-        viewModel.getRefreshLiveData().observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-        })
+//        viewModel.getContactListLiveData().observe(viewLifecycleOwner, Observer {
+//            adapter.submitList(it)
+//        })
     }
 }

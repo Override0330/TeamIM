@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.OnBackgroundEvent
+import com.override0330.teamim.model.bean.NowUser
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -15,7 +16,7 @@ import org.greenrobot.eventbus.EventBus
  * @description
  */
 
-@Database(entities = [TaskDB::class,MessageDB::class,ContactDB::class,UserDB::class,UpdateTime::class],version = 1)
+@Database(entities = [MessageDB::class,ContactDB::class,UserDB::class,ConversationDB::class],version = 1)
 abstract class AppDatabase:RoomDatabase(){
 
     abstract fun appDao():AppDao
@@ -26,15 +27,13 @@ abstract class AppDatabase:RoomDatabase(){
         @Synchronized
         fun getInstant():AppDatabase{
             if (instant==null) {
-                instant = Room.databaseBuilder(BaseApp.context(), AppDatabase::class.java, "TeamDB")
+                instant = Room.databaseBuilder(BaseApp.context(), AppDatabase::class.java, NowUser.getInstant().nowAVuser.objectId)
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             //数据初始化
                             EventBus.getDefault().postSticky(OnBackgroundEvent{
                                 Log.d("数据库","初始化")
-                                instant!!.appDao().insertTask(taskList.map { TaskDB(0, it, "", "我太难了我太难了我太难了我太难了") } )
-                                instant!!.appDao().insertMessage(messageList.map { MessageDB(0,it,"黄龙","20:56","在吗？kkp？") })
                             })
                         }
 

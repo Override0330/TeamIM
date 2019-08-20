@@ -11,6 +11,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.override0330.teamim.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 class MainFragment : BaseFragment(){
@@ -61,6 +63,11 @@ class MainFragment : BaseFragment(){
             }
         })
         currentNavController = controller
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun openChat(openChat: OpenChat){
+        findNavController().navigate(openChat.navigationId,openChat.bundle)
     }
 
 }

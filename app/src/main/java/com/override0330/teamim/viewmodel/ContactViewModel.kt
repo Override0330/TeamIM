@@ -1,10 +1,11 @@
 package com.override0330.teamim.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
-import com.override0330.teamim.model.db.ContactDB
+import com.override0330.teamim.model.bean.UserItem
 
 /**
  * @data 2019-08-17
@@ -14,7 +15,14 @@ import com.override0330.teamim.model.db.ContactDB
 
 
 class ContactViewModel : BaseViewModel(){
-    private val contactRepository = UserRepository()
+    private val userRepository = UserRepository.getInstant()
 
-    fun getRefreshLiveData(): LiveData<PagedList<ContactDB>> = contactRepository.getRefreshLiveData(lifecycleOwner)
+    fun getContactListLiveData(): LiveData<List<UserItem>>{
+        val list = MutableLiveData<List<UserItem>>()
+        userRepository.getContactListLiveData(lifecycleOwner).observe(lifecycleOwner, Observer {
+            val data = it.map { UserItem(it.userId,it.userName,it.avatar,it.geQian) }
+            list.postValue(data)
+        })
+        return list
+    }
 }

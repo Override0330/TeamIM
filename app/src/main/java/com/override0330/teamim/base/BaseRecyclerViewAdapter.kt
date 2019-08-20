@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class BaseRecyclerViewAdapter<T:ViewDataBinding,V>(private val resourceId:Int,
                                                    private val dataBindingId:Int,
-                                                   private var showList:List<V>?):RecyclerView.Adapter<BaseRecyclerViewAdapter.DataBindingViewHolder<V>>(), View.OnClickListener{
+                                                   var showList:List<V>?):RecyclerView.Adapter<BaseRecyclerViewAdapter.DataBindingViewHolder<V>>(), View.OnClickListener{
     var onItemOnClickListener: OnItemOnClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder<V> {
         val dataBinding = DataBindingUtil.inflate<T>(LayoutInflater.from(parent.context),resourceId,parent,false)

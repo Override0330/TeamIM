@@ -5,7 +5,6 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.db.AppDatabase
-import com.override0330.teamim.model.db.TaskDB
 
 /**
  * @data 2019-08-15
@@ -18,10 +17,10 @@ class TaskViewModel : BaseViewModel(){
 
     private val database = AppDatabase.getInstant()
 
-    fun getRefreshLiveData(): LiveData<PagedList<TaskDB>> =
-        LivePagedListBuilder(database.appDao().getAllTask(), PagedList.Config.Builder()
-            .setPageSize(5)                         //配置分页加载的数量
-            .setEnablePlaceholders(false)     //配置是否启动PlaceHolders
-            .setInitialLoadSizeHint(5)              //初始化加载的数量
-            .build()).build()
+//    fun getContactListLiveData(): LiveData<PagedList<TaskDB>> =
+//        LivePagedListBuilder(database.appDao().getAllTask(), PagedList.Config.Builder()
+//            .setPageSize(5)                         //配置分页加载的数量
+//            .setEnablePlaceholders(false)     //配置是否启动PlaceHolders
+//            .setInitialLoadSizeHint(5)              //初始化加载的数量
+//            .build()).build()
 }

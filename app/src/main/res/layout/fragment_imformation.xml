@@ -5,8 +5,8 @@
 
     <data>
         <variable
-                name="informationUser"
-                type="com.override0330.teamim.model.bean.User"/>
+                name="informationUserItem"
+                type="com.override0330.teamim.model.bean.UserItem"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 tools:text="田晓煊"
                 android:transitionName="message_name"
-                android:text="@{informationUser.userName}"
+                android:text="@{informationUserItem.userName}"
                 android:textStyle="bold"
                 android:textSize="27sp"
                 android:layout_marginTop="8dp"
@@ -125,7 +125,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:textSize="20sp"
-                        tools:text="@{informationUser.userId}"
+                        tools:text="@{informationUserItem.userId}"
                         android:gravity="center_vertical"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -145,7 +145,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:textSize="20sp"
-                        android:text="@{informationUser.userGeqian}"
+                        android:text="@{informationUserItem.userGeqian}"
                         android:gravity="center_vertical"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 

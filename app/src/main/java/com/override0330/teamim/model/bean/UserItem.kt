@@ -9,13 +9,11 @@ import androidx.databinding.ObservableField
  */
 
 
-class User(id:String,name:String,avatarUrl:String,geQian:String){
+class UserItem(id:String, name:String, avatarUrl:String, geQian:String){
     val userId =  ObservableField<String>()
     val userAvatar= ObservableField<String>()
     val userName= ObservableField<String>()
     val userGeqian= ObservableField<String>()
-    val overTaskItemList= ObservableField<List<TaskItem>>()
-    val ingTaskItemList= ObservableField<List<TaskItem>>()
 
     init {
         userId.set(id)

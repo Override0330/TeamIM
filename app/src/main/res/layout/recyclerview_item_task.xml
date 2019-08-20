@@ -2,13 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-        <variable
-                name="taskItem"
-                type="com.override0330.teamim.model.bean.TaskItem"/>
-    </data>
-
     <androidx.appcompat.widget.LinearLayoutCompat
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -29,11 +22,9 @@
                         tools:srcCompat="@tools:sample/avatars"
                         android:id="@+id/iv_item_task"
                         app:layout_constraintStart_toStartOf="@+id/guideline3"
-                        app:layout_constraintTop_toTopOf="@+id/guideline5"
-                        picUrl="@{taskItem.taskAvatar}"/>
+                        app:layout_constraintTop_toTopOf="@+id/guideline5"/>
 
                 <TextView
-                        android:text="@{taskItem.taskName}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_task_title"
@@ -44,7 +35,6 @@
                         android:layout_marginStart="16dp"/>
 
                 <TextView
-                        android:text="@{taskItem.taskDetail}"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:id="@+id/tv_task_introduction"

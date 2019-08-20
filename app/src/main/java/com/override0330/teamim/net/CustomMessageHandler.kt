@@ -5,6 +5,10 @@ import cn.leancloud.im.v2.AVIMClient
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMMessage
 import cn.leancloud.im.v2.AVIMMessageHandler
+import com.alibaba.fastjson.JSONObject
+import com.override0330.teamim.ReceiveMessageEvent
+import com.override0330.teamim.model.db.MessageDB
+import org.greenrobot.eventbus.EventBus
 
 /**
  * @data 2019-08-18
@@ -17,6 +21,11 @@ class CustomMessageHandler :AVIMMessageHandler(){
     override fun onMessage(message: AVIMMessage?, conversation: AVIMConversation?, client: AVIMClient?) {
         super.onMessage(message, conversation, client)
         //接受消息回调
-        Log.d("LeanCloud","${message?.content}")
+        if (message!=null){
+            val realContent = JSONObject.parseObject(message.content).getString("_lctext")
+            val messageDB = MessageDB(message.messageId,message.from,message.conversationId,message.timestamp,realContent)
+            EventBus.getDefault().postSticky(ReceiveMessageEvent(messageDB))
+            Log.d("IM 收到消息", realContent)
+        }
     }
 }

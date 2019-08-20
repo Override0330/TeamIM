@@ -1,4 +1,4 @@
-package com.override0330.teamim.view.adapter
+package com.override0330.teamim.utils
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter

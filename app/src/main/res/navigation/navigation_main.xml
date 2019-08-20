@@ -13,6 +13,12 @@
         <action
                 android:id="@+id/action_mainFragment_to_contactFragment"
                 app:destination="@id/contactFragment"/>
+        <action
+                android:id="@+id/action_mainFragment_to_messageFragment"
+                app:destination="@id/messageFragment"/>
+        <argument
+                android:name="member"
+                app:argType="string[]"/>
     </fragment>
     <fragment
             android:id="@+id/loginRegisterFragment"
@@ -27,16 +33,22 @@
     </fragment>
     <fragment
             android:id="@+id/contactFragment"
-            android:name="com.override0330.teamim.view.ContactFragment"
+            android:name="com.override0330.teamim.view.ContactHomeFragment"
             android:label="ContactFragment"
-            tools:layout="@layout/fragment_contact_main">
+            tools:layout="@layout/fragment_contact_home">
         <action
                 android:id="@+id/action_contactFragment_to_addFriendFragment"
                 app:destination="@id/addFriendFragment"/>
+        <action
+                android:id="@+id/action_contactFragment_to_messageFragment"
+                app:destination="@id/messageFragment"/>
+        <argument
+                android:name="member"
+                app:argType="string[]"/>
     </fragment>
     <fragment
             android:id="@+id/addFriendFragment"
-            android:name="com.override0330.teamim.view.AddFriendFragment"
+            android:name="com.override0330.teamim.view.ContactAddFriendFragment"
             android:label="AddFriendFragment"
             tools:layout="@layout/fragment_add_friend">
         <action
@@ -52,8 +64,8 @@
             android:label="PersonFragment"
             tools:layout="@layout/fragment_imformation">
         <argument
-                android:name="userId"
-                app:argType="string"/>
+                android:name="member"
+                app:argType="string[]"/>
         <action
                 android:id="@+id/action_personFragment_to_messageFragment"
                 app:destination="@id/messageFragment"
@@ -64,7 +76,7 @@
     </fragment>
     <fragment
             android:id="@+id/messageFragment"
-            android:name="com.override0330.teamim.view.MessageFragment"
+            android:name="com.override0330.teamim.view.MessageSingleChatFragment"
             android:label="MessageFragment"
             tools:layout="@layout/fragment_communicate_detail"/>
 </navigation>
