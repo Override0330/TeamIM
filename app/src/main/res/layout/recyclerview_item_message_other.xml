@@ -27,12 +27,12 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tv_item_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_message_other"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    tools:text="@tools:sample/lorem/random"
-                    android:text="@{message.messageDetail}"/>
+                    tools:text="@tools:sample/lorem/random"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

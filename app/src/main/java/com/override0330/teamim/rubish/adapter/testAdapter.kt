@@ -20,9 +20,9 @@
 //class TestAdapter<T: ViewDataBinding,V>(private val resourceId:Int,
 //                                                    private val dataBindingId:Int,
 //                                                    private var showList:List<V>?):
-//    RecyclerView.Adapter<TestAdapter.DataBindingViewHolder<V>>(), View.OnClickListener {
+//    RecyclerView.Adapter<TestAdapter.ViewHolder<V>>(), View.OnClickListener {
 //    var onItemOnClickListener: OnItemOnClickListener? = null
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder<V> {
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<V> {
 //        val dataBinding:ViewDataBinding
 //        if (viewType==1){
 //            //对方发的消息
@@ -36,20 +36,20 @@
 //                R.layout.recyclerview_item_message_me,parent,false)
 //        }
 //        dataBinding.root.setOnClickListener(this)
-//        return DataBindingViewHolder(dataBinding, dataBindingId)
+//        return ViewHolder(dataBinding, dataBindingId)
 //    }
 //
 //    override fun getItemCount(): Int {
 //        return showList?.size ?: 0
 //    }
 //
-//    override fun onBindViewHolder(holder: DataBindingViewHolder<V>, position: Int) {
+//    override fun onBindViewHolder(holder: ViewHolder<V>, position: Int) {
 //        showList?.get(position)?.let { holder.bindingTo(it) }
 //        holder.itemView.tag = position
 //    }
 //
 //
-//    class DataBindingViewHolder<V>(private val dataBinding: ViewDataBinding, private val dataBindingId: Int) :
+//    class ViewHolder<V>(private val dataBinding: ViewDataBinding, private val dataBindingId: Int) :
 //        RecyclerView.ViewHolder(dataBinding.root) {
 //        fun bindingTo(itemData: V) {
 //            dataBinding.setVariable(dataBindingId, itemData)

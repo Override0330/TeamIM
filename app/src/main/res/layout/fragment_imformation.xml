@@ -45,7 +45,13 @@
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/progress_bar_information"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:indeterminate="true"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayout"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
         <androidx.constraintlayout.widget.Guideline
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -76,7 +82,6 @@
                 android:layout_height="wrap_content"
                 tools:text="田晓煊"
                 android:transitionName="message_name"
-                android:text="@{informationUserItem.userName}"
                 android:textStyle="bold"
                 android:textSize="27sp"
                 android:layout_marginTop="8dp"
@@ -125,7 +130,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:textSize="20sp"
-                        tools:text="@{informationUserItem.userId}"
                         android:gravity="center_vertical"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -145,7 +149,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:textSize="20sp"
-                        android:text="@{informationUserItem.userGeqian}"
                         android:gravity="center_vertical"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 

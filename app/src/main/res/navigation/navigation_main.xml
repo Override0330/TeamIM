@@ -17,8 +17,8 @@
                 android:id="@+id/action_mainFragment_to_messageFragment"
                 app:destination="@id/messageFragment"/>
         <argument
-                android:name="member"
-                app:argType="string[]"/>
+                android:name="conversationId"
+                app:argType="string"/>
     </fragment>
     <fragment
             android:id="@+id/loginRegisterFragment"
@@ -43,8 +43,8 @@
                 android:id="@+id/action_contactFragment_to_messageFragment"
                 app:destination="@id/messageFragment"/>
         <argument
-                android:name="member"
-                app:argType="string[]"/>
+                android:name="conversationId"
+                app:argType="string"/>
     </fragment>
     <fragment
             android:id="@+id/addFriendFragment"
@@ -64,8 +64,8 @@
             android:label="PersonFragment"
             tools:layout="@layout/fragment_imformation">
         <argument
-                android:name="member"
-                app:argType="string[]"/>
+                android:name="conversationId"
+                app:argType="string"/>
         <action
                 android:id="@+id/action_personFragment_to_messageFragment"
                 app:destination="@id/messageFragment"
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
             android:id="@+id/messageFragment"
-            android:name="com.override0330.teamim.view.MessageSingleChatFragment"
+            android:name="com.override0330.teamim.view.MessageChatFragment"
             android:label="MessageFragment"
-            tools:layout="@layout/fragment_communicate_detail"/>
+            tools:layout="@layout/fragment_message_chat"/>
 </navigation>

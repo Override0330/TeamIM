@@ -4,6 +4,7 @@ import android.util.Log
 import cn.leancloud.im.v2.AVIMClient
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMConversationEventHandler
+import com.alibaba.fastjson.JSONObject
 
 /**
  * @data 2019-08-18
@@ -37,5 +38,15 @@ class CustomConversationEventHandler :AVIMConversationEventHandler(){
 
     override fun onInvited(client: AVIMClient?, conversation: AVIMConversation?, operator: String?) {
         Log.d("LeanCloud","被加入了聊天")
+    }
+
+    override fun onInfoChanged(
+        client: AVIMClient?,
+        conversation: AVIMConversation?,
+        attr: JSONObject?,
+        operator: String?
+    ) {
+        super.onInfoChanged(client, conversation, attr, operator)
+        Log.d("LeanCloud","聊天发生了改变")
     }
 }

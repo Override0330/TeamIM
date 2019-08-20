@@ -23,6 +23,8 @@ class ReceiveMessageEvent(val message:MessageDB)
 
 class AddMessageBoxEvent(val conversationItemDB: ConversationDB)
 
-class AddMessageItem(val messageItem: MessageItem)
+class AddMessageItem(val messageItem: MessageDB)
 
 class OpenChat(val bundle: Bundle,val navigationId:Int)
+
+class ShowOrHideProgressBarEvent(val isShow:Boolean)

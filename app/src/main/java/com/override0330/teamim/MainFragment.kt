@@ -70,4 +70,13 @@ class MainFragment : BaseFragment(){
         findNavController().navigate(openChat.navigationId,openChat.bundle)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun ShowProgressBar(showOrHideProgressBarEvent: ShowOrHideProgressBarEvent){
+       if (showOrHideProgressBarEvent.isShow){
+           progress_bar_main.show()
+       }else{
+           progress_bar_main.hide()
+       }
+    }
+
 }

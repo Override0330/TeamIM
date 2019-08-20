@@ -3,13 +3,13 @@ package com.override0330.teamim.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.widget.TextView
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.fastjson.JSONObject
 import com.override0330.teamim.R
-import com.override0330.teamim.databinding.RecyclerviewItemMessageMeBinding
-import com.override0330.teamim.databinding.RecyclerviewItemMessageOtherBinding
 import com.override0330.teamim.model.bean.MessageItem
+import com.override0330.teamim.model.db.MessageDB
 
 
 /**
@@ -19,39 +19,35 @@ import com.override0330.teamim.model.bean.MessageItem
  */
 
 
-class ChatMessageAdapter(private val dataBindingId:Int,
-                         var showList:ArrayList<MessageItem>):
-
-    RecyclerView.Adapter<ChatMessageAdapter.DataBindingViewHolder<MessageItem>>(), View.OnClickListener{
+class ChatMessageAdapter:RecyclerView.Adapter<ChatMessageAdapter.ViewHolder>(), View.OnClickListener{
+    var showList = ArrayList<MessageDB>()
     var onItemOnClickListener: OnItemOnClickListener? = null
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder<MessageItem> {
-        val dataBinding:ViewDataBinding
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view:View
         if (viewType==1){
             //对方发的消息
-            dataBinding = DataBindingUtil.inflate<RecyclerviewItemMessageOtherBinding>(
-                LayoutInflater.from(parent.context),
-                R.layout.recyclerview_item_message_other,parent,false)
+            view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_other,parent,false)
         }else{
             //自己的消息
-            dataBinding = DataBindingUtil.inflate<RecyclerviewItemMessageMeBinding>(
-                LayoutInflater.from(parent.context),
-                R.layout.recyclerview_item_message_me,parent,false)
+            view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_me,parent,false)
         }
-        return DataBindingViewHolder(dataBinding,dataBindingId)
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return showList.size
     }
 
-    override fun onBindViewHolder(holder: DataBindingViewHolder<MessageItem>, position: Int) {
-        showList.get(position)?.let { holder.bindingTo(it) }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val messageDB = showList[position]
+        val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
+        holder.content.text = realText
         holder.itemView.tag = position
     }
 
     override fun getItemViewType(position: Int): Int {
         with(showList[position]){
-            return if (this.fromId != com.override0330.teamim.model.bean.NowUser.getInstant().nowAVuser.objectId){
+            return if (this.from != com.override0330.teamim.model.bean.NowUser.getInstant().nowAVuser.objectId){
                 //对方的消息
                 1
             }else{
@@ -62,10 +58,8 @@ class ChatMessageAdapter(private val dataBindingId:Int,
     }
 
 
-    class DataBindingViewHolder<V>(private val dataBinding: ViewDataBinding, private val dataBindingId: Int): RecyclerView.ViewHolder(dataBinding.root) {
-        fun bindingTo(itemData:V){
-            dataBinding.setVariable(dataBindingId,itemData)
-        }
+    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val content = view.findViewById<TextView>(R.id.tv_item_message)
     }
 
     interface OnItemOnClickListener{
@@ -78,7 +72,7 @@ class ChatMessageAdapter(private val dataBindingId:Int,
         }
     }
 
-    fun submitShowList(showList:ArrayList<MessageItem>){
+    fun submitShowList(showList:ArrayList<MessageDB>){
         this.showList = showList
         notifyDataSetChanged()
     }

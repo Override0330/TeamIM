@@ -22,10 +22,9 @@ class CustomMessageHandler :AVIMMessageHandler(){
         super.onMessage(message, conversation, client)
         //接受消息回调
         if (message!=null){
-            val realContent = JSONObject.parseObject(message.content).getString("_lctext")
-            val messageDB = MessageDB(message.messageId,message.from,message.conversationId,message.timestamp,realContent)
+            val messageDB = MessageDB(message.messageId,message.from,message.conversationId,message.timestamp,message.content)
             EventBus.getDefault().postSticky(ReceiveMessageEvent(messageDB))
-            Log.d("IM 收到消息", realContent)
+            Log.d("IM 收到消息", message.content)
         }
     }
 }

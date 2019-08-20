@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.transition.*
+import com.bumptech.glide.Glide
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.databinding.FragmentImformationBinding
@@ -37,32 +38,46 @@ class PersonInformationFragment : BaseViewModelFragment<PersonViewModel>(){
         super.onViewCreated(view, savedInstanceState)
         val args = arguments
         if (args!=null){
+            progress_bar_information.show()
             viewModel.userId = ContactAddFriendFragmentArgs.fromBundle(args).userId
-            viewModel.isContact(viewModel.userId).observe(viewLifecycleOwner, Observer {
-                if (it){
-                    tv_information_add.text = "发送消息"
-                    tv_information_add.setOnClickListener {
-                        //在通讯录中，发送消息
-                        val bundle = PersonInformationFragmentArgs.Builder(arrayOf(viewModel.userId)).build().toBundle()
-                        findNavController().navigate(R.id.action_personFragment_to_messageFragment,bundle)
+            viewModel.getUser(viewModel.userId).observe(viewLifecycleOwner, Observer {user->
+                Glide.with(this).load(user.getString("avatar")).into(iv_information_avatar)
+                tv_information_name.text = user.getString("username")
+                tv_item_ge_qian_detail.text = user.getString("geQian")
+                tv_item_id_detail.text = user.getString("objectId")
+                viewModel.isContact(viewModel.userId).observe(viewLifecycleOwner, Observer {
+                    if (it){
+                        tv_information_add.text = "发送消息"
+                        progress_bar_information.hide()
+                        tv_information_add.setOnClickListener {
+                            viewModel.createConversation(listOf(viewModel.userId),user.getString("username")).observe(viewLifecycleOwner,
+                                Observer {
+                                    val bundle = PersonInformationFragmentArgs.Builder(it).build().toBundle()
+                                  findNavController().navigate(R.id.action_personFragment_to_messageFragment,bundle)
+                                })
+                        }
+                    }else {
+                        //不在通讯录中，添加到通讯录，直接添加成功
+                        tv_information_add.text = "添加到通讯录"
+                        progress_bar_information.hide()
+                        tv_information_add.setOnClickListener {
+                            viewModel.addUserToContact(viewModel.userId).observe(viewLifecycleOwner, Observer {
+                                if (it==PersonViewModel.ConnectStat.SUCCESS){
+                                    //关注成功
+                                    Toast.makeText(this.context,"已添加到通讯录",Toast.LENGTH_SHORT).show()
+                                    viewModel.createConversation(listOf(viewModel.userId),user.getString("username")).observe(viewLifecycleOwner,
+                                        Observer {
+                                            val bundle = PersonInformationFragmentArgs.Builder(it).build().toBundle()
+                                            findNavController().navigate(R.id.action_personFragment_to_messageFragment,bundle)
+                                        })
+                                }else if(it==PersonViewModel.ConnectStat.FAIL){
+                                    //关注失败
+                                    Toast.makeText(this.context,"添加失败",Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
                     }
-                }else {
-                    //不在通讯录中，添加到通讯录，直接添加成功
-                    tv_information_add.text = "添加到通讯录"
-                    tv_information_add.setOnClickListener {
-                        viewModel.addUserToContact(viewModel.userId).observe(viewLifecycleOwner, Observer {
-                            if (it==PersonViewModel.ConnectStat.SUCCESS){
-                                //关注成功
-                                Toast.makeText(this.context,"已添加到通讯录",Toast.LENGTH_SHORT).show()
-                                val bundle = PersonInformationFragmentArgs.Builder(arrayOf(viewModel.userId)).build().toBundle()
-                                findNavController().navigate(R.id.action_personFragment_to_messageFragment,bundle)
-                            }else if(it==PersonViewModel.ConnectStat.FAIL){
-                                //关注失败
-                                Toast.makeText(this.context,"添加失败",Toast.LENGTH_SHORT).show()
-                            }
-                        })
-                    }
-                }
+                })
             })
         }else{
             findNavController().popBackStack()

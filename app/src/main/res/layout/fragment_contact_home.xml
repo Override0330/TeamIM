@@ -48,6 +48,12 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_toolbar_title"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_toolbar_title"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progress_bar_contact"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
     <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="40dp"

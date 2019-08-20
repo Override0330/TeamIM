@@ -1,5 +1,6 @@
 package com.override0330.teamim.Repository
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -34,7 +35,8 @@ class UserRepository private constructor(){
     val database = AppDatabase.getInstant()
 
     //更新联系人信息
-    private fun updateContactList(lifecycleOwner: LifecycleOwner){
+    private fun updateContactList(lifecycleOwner: LifecycleOwner):LiveData<List<String>>{
+        val list = MutableLiveData<List<String>>()
         //这里进行拿取的逻辑处理
         AVUser.getCurrentUser().followerQuery(AVUser::class.java).findInBackground().subscribe(object :
             io.reactivex.Observer<List<AVObject>> {
@@ -46,8 +48,11 @@ class UserRepository private constructor(){
 //                val list = t.map { ContactDB(it.getString("objectId"),it.getString("name"),it.getString("avatar"),it.getString("geQian")) }
                 //垃圾sdk还需要手动解析？？？！！！
                 val idList = t.map { it.getJSONObject("follower").getJSONObject("serverData").getString("objectId") }
+//                val idList = t.map { it.objectId }
+                list.postValue(idList)
                 idList.forEach {
                     getObjectByIdFromNet("_User",it).observe(lifecycleOwner,androidx.lifecycle.Observer {
+                        Log.d("更新联系人数据库", it.objectId+ it.toJSONString())
                         EventBus.getDefault().postSticky(OnBackgroundEvent{
                             database.appDao().insertContact(ContactDB(it.getString("objectId"),it.getString("username"),it.getString("avatar"),it.getString("geQian")))
                         })
@@ -57,11 +62,23 @@ class UserRepository private constructor(){
 
             override fun onError(e: Throwable) {}
         })
+        return list
+    }
+
+    fun getContactIdListLiveData(lifecycleOwner: LifecycleOwner):LiveData<List<String>>{
+        val data = MutableLiveData<List<String>>()
+        updateContactList(lifecycleOwner).observe(lifecycleOwner, Observer {
+            data.postValue(it)
+        })
+        return data
     }
 
     //从数据库中拿取联系人列表
     fun getContactListLiveData(lifecycleOwner: LifecycleOwner): LiveData<List<ContactDB>> {
-        val data = database.appDao().getAllContactList()
+        val data = MutableLiveData<List<ContactDB>>()
+        database.appDao().getAllContactList().observe(lifecycleOwner, Observer {
+            data.postValue(it)
+        })
         //启动网络请求更新数据库
         updateContactList(lifecycleOwner)
         return data

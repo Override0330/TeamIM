@@ -35,7 +35,6 @@ class LoginRegisterViewModel : BaseViewModel(){
             override fun onSubscribe(d: Disposable) {}
 
             override fun onNext(t: AVUser) {
-                state.postValue(LoginRegisterState.SUCCESS)
                 with(NowUser.getInstant()){
                     nowAVuser = t
                     //直接登录IM服务器
@@ -45,10 +44,10 @@ class LoginRegisterViewModel : BaseViewModel(){
                             Log.d("debug","done回调")
                             if (e == null) {
                                 Log.d("LeanCloud","成功打开IMClient链接")
-                                LearnCloudNetHelper.getInstant().isLoginToIMClient = true
                                 //设置全局监听
                                 AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
                                 AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
+                                state.postValue(LoginRegisterState.SUCCESS)
                             }
                         }
                     })
@@ -74,7 +73,6 @@ class LoginRegisterViewModel : BaseViewModel(){
             override fun onComplete() {}
             override fun onSubscribe(d: Disposable) {}
             override fun onNext(t: AVUser) {
-                state.postValue(LoginRegisterState.SUCCESS)
                 with(NowUser.getInstant()){
                     nowAVuser = t
                     //直接登录IM服务器
@@ -87,6 +85,7 @@ class LoginRegisterViewModel : BaseViewModel(){
                                 //设置全局监听
                                 AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
                                 AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
+                                state.postValue(LoginRegisterState.SUCCESS)
                             }
                         }
                     })

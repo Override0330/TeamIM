@@ -1,6 +1,7 @@
 package com.override0330.teamim.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,11 @@ import com.override0330.teamim.base.BaseRecyclerViewAdapter
 import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.databinding.RecyclerviewItemMessageBinding
 import com.override0330.teamim.model.bean.MessageItem
+import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.db.AppDatabase
+import com.override0330.teamim.view.adapter.MessageHomeAdapter
 import com.override0330.teamim.viewmodel.MessageHomeViewModel
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_message_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -29,8 +33,7 @@ class MessageHomeFragment : BaseViewModelFragment<MessageHomeViewModel>() {
     override val viewModelClass: Class<MessageHomeViewModel>
         get() = MessageHomeViewModel::class.java
 
-    val adapter = BaseRecyclerViewAdapter<RecyclerviewItemMessageBinding,MessageItem>(R.layout.recyclerview_item_message,
-        BR.messageItem,null)
+    val adapter = MessageHomeAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -39,24 +42,34 @@ class MessageHomeFragment : BaseViewModelFragment<MessageHomeViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         //显示消息列表
-        rv_message_list.adapter = adapter
-        rv_message_list.layoutManager = LinearLayoutManager(this.context)
-        viewModel.getConversationLiveData().observe(viewLifecycleOwner, Observer {
-            //应该判断是否更新，因为这个会重新绘制视图
-            adapter.submitShowList(it)
-        })
-        adapter.onItemOnClickListener=object :BaseRecyclerViewAdapter.OnItemOnClickListener{
-            override fun onItemClick(itemView: View, position: Int) {
-                val fromId = adapter.showList?.get(position)?.fromId
-                if (fromId!=null){
-                    val args = MainFragmentArgs.Builder(arrayOf(fromId)).build().toBundle()
-                    EventBus.getDefault().postSticky(OpenChat(args,R.id.action_mainFragment_to_messageFragment))
-                }
+        EventBus.getDefault().post(ShowOrHideProgressBarEvent(true))
+        initHome()
+    }
+
+    private fun initHome(){
+        val showList = viewModel.getConversationList()
+        if (showList.isNotEmpty()){
+            rv_message_list.layoutManager = LinearLayoutManager(this.context)
+            rv_message_list.adapter = adapter
+            adapter.refresh(showList)
+            EventBus.getDefault().post(ShowOrHideProgressBarEvent(false))
+        }else{
+            viewModel.getConversationListFromNet().observe(viewLifecycleOwner, Observer {
+                Log.d("debug","主页收到数据回调 ${it.size}")
+                rv_message_list.layoutManager = LinearLayoutManager(this.context)
+                rv_message_list.adapter = adapter
+                adapter.refresh(it)
+                EventBus.getDefault().post(ShowOrHideProgressBarEvent(false))
+            })
+        }
+        adapter.onItemClickListener=object :MessageHomeAdapter.OnItemClickListener{
+            override fun onItemClick(view: View, position: Int) {
+                val conversationId = adapter.showList!![position].conversationId
+                val args = MainFragmentArgs.Builder(conversationId).build().toBundle()
+                EventBus.getDefault().postSticky(OpenChat(args,R.id.action_mainFragment_to_messageFragment))
             }
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC, sticky = true)

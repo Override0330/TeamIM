@@ -1,11 +1,10 @@
 package com.override0330.teamim.viewmodel
 
-import android.util.EventLog
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.paging.PagedList
+import cn.leancloud.AVObject
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.callback.AVIMConversationCallback
@@ -88,15 +87,13 @@ class ConversationViewModel :BaseViewModel(){
 //        }
 //    }
 
-    fun getMessageList2():LiveData<List<MessageItem>> {
-        val list = MutableLiveData<List<MessageItem>>()
+    fun getMessageList():LiveData<List<MessageDB>> {
+        val list = MutableLiveData<List<MessageDB>>()
         messageRepository.getMessageList2(conversation!!).observe(lifecycleOwner, Observer {
-            val dataList = it.map {MessageItem(it.conversationId,it.from,it.from,it.from,
-                JSONObject.parseObject(it.sendContent).getString("_lctext"),Date(it.timestamp).toString())}
-            list.postValue(dataList)
+            list.postValue(it)
         })
 //        return if (conversation!=null){
-//            messageRepository.getMessageList2(conversation!!)
+//            messageRepository.getMessageList(conversation!!)
 //        }else{
 //            Log.d("获取聊天记录","发生错误：conversation为null")
 //            MutableLiveData<List<MessageDB>>()
@@ -114,16 +111,17 @@ class ConversationViewModel :BaseViewModel(){
                     //发送成功
                     state.postValue(GetResultState.SUCCESS)
                     //实时更新
-                    val messageItem = MessageItem(conversation!!.conversationId,NowUser.getInstant().nowAVuser.objectId,messageDetail = msg.text,messageTime = System.currentTimeMillis().toString())
-                    EventBus.getDefault().postSticky(AddMessageItem(messageItem))
-                    //更新conversation的最新消息
-                    EventBus.getDefault().postSticky(OnBackgroundEvent{
-                        val conversationDB = conversationRepository.getConversationById(msg.conversationId)
-                        conversationDB.lastMessage = msg.text
-                        conversationDB.updateTime = System.currentTimeMillis()
-                        //提交更改
-                        conversationRepository.addConversation(conversationDB)
-                    })
+                    val messageDB = MessageDB(msg.messageId,msg.from,conversation!!.conversationId,System.currentTimeMillis(),msg.content)
+                    println(msg.content)
+                    EventBus.getDefault().postSticky(AddMessageItem(messageDB))
+//                    //更新conversation的最新消息
+//                    EventBus.getDefault().postSticky(OnBackgroundEvent{
+//                        val conversationDB = conversationRepository.getConversationById(msg.conversationId)
+//                        conversationDB.lastMessage = msg.text
+//                        conversationDB.updateTime = System.currentTimeMillis()
+//                        //提交更改
+//                        conversationRepository.addConversation(conversationDB)
+//                    })
                 }else{
                     e.printStackTrace()
                     state.postValue(GetResultState.FAIL)
@@ -150,5 +148,22 @@ class ConversationViewModel :BaseViewModel(){
     //将新收到的信息加进来
     fun addMessage(messageDB: MessageDB){
         messageRepository.addMessage(messageDB)
+    }
+
+    fun getConversationObject(conversationId:String):LiveData<AVObject>{
+        val conversation = MutableLiveData<AVObject>()
+        userRepository.getObjectByIdFromNet("_Conversation",conversationId).observe(lifecycleOwner, Observer {
+            conversation.postValue(it)
+        })
+        return conversation
+    }
+
+    //拿到id对应的conversation
+    fun getConversation(id:String):LiveData<AVIMConversation>{
+        val data = MutableLiveData<AVIMConversation>()
+        EventBus.getDefault().postSticky(OnBackgroundEvent{
+            data.postValue(conversationRepository.getConversationFromNetById(id))
+        })
+        return data
     }
 }
