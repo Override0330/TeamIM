@@ -8,12 +8,15 @@ import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
 import com.override0330.teamim.GetResultState
+import com.override0330.teamim.OnBackgroundEvent
+import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.bean.UserItem
 import com.override0330.teamim.model.db.ContactDB
 import com.override0330.teamim.model.db.ConversationDB
+import org.greenrobot.eventbus.EventBus
 
 /**
  * @data 2019-08-17
@@ -24,6 +27,7 @@ import com.override0330.teamim.model.db.ConversationDB
 
 class ContactViewModel : BaseViewModel(){
     private val userRepository = UserRepository.getInstant()
+    private val conversationRepository = ConversationRepository.getInstant()
 
     fun getContactListLiveData(): LiveData<ArrayList<ContactDB>>{
         val list = MutableLiveData<ArrayList<ContactDB>>()
@@ -31,6 +35,16 @@ class ContactViewModel : BaseViewModel(){
             val arrayList = ArrayList<ContactDB>()
             arrayList.addAll(it)
             list.postValue(arrayList)
+        })
+        return list
+    }
+
+    fun getGroupListLiveData(userId:String): LiveData<List<AVIMConversation>>{
+        val list = MutableLiveData<List<AVIMConversation>>()
+        userRepository.getGroupListLiveData(userId).observe(lifecycleOwner, Observer {
+            EventBus.getDefault().postSticky(OnBackgroundEvent{
+                it.map { conversationRepository.getConversationFromNetById(it) }
+            })
         })
         return list
     }

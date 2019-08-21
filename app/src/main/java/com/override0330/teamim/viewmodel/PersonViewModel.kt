@@ -30,45 +30,48 @@ import org.greenrobot.eventbus.EventBus
 
 
 class PersonViewModel : BaseViewModel(){
-    val userRepository = UserRepository.getInstant()
-    val conversationRepository = ConversationRepository.getInstant()
+    private val userRepository = UserRepository.getInstant()
+    private val conversationRepository = ConversationRepository.getInstant()
     lateinit var userId:String
 
     fun createConversation(list:List<String>,name:String):LiveData<String>{
-        val id = MutableLiveData<String>()
-        NowUser.getInstant().nowClient.createConversation(list,name,null,false,true,object :
-            AVIMConversationCreatedCallback() {
-            override fun done(conversation: AVIMConversation?, e: AVIMException?) {
-                if (e==null&&conversation!=null){
-                    //将这个消息存入消息列表,目前来说通讯录是新建对话的唯一来源
-                    NowUser.getInstant().conversationHashMap[conversation.conversationId] = conversation
-                    id.postValue(conversation.conversationId)
-                    //将用户Id和对话Id上传至云端
-                    EventBus.getDefault().postSticky(OnBackgroundEvent{
-                        val query = AVQuery<AVObject>("UserConversation")
-                        query.whereEqualTo("conversationId",conversation.conversationId)
-                        query.whereEqualTo("userId",NowUser.getInstant().nowAVuser.objectId)
-                        query.findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
-                            override fun onComplete() {}
-
-                            override fun onSubscribe(d: Disposable) {}
-
-                            override fun onNext(t: List<AVObject>) {
-                                if (t.isEmpty()){
-                                    val conversationObject = AVObject("UserConversation")
-                                    conversationObject.put("userId",NowUser.getInstant().nowAVuser.objectId)
-                                    conversationObject.put("conversationId",conversation.conversationId)
-                                    conversationObject.save()
-                                }
-                            }
-                            override fun onError(e: Throwable) {}
-                        })
-
-                    })
-                }
-            }
-        })
-        return id
+        return conversationRepository.createConversation(list,name)
+//        val id = MutableLiveData<String>()
+//        NowUser.getInstant().nowClient.createConversation(list,name,null,false,true,object :
+//            AVIMConversationCreatedCallback() {
+//            override fun done(conversation: AVIMConversation?, e: AVIMException?) {
+//                if (e==null&&conversation!=null){
+//                    //将这个消息存入消息列表,目前来说通讯录是新建对话的唯一来源
+//                    NowUser.getInstant().conversationHashMap[conversation.conversationId] = conversation
+//                    id.postValue(conversation.conversationId)
+//                    //将用户Id和对话Id上传至云端
+//                    EventBus.getDefault().postSticky(OnBackgroundEvent{
+//                        val query = AVQuery<AVObject>("UserConversation")
+//                        query.whereEqualTo("conversationId",conversation.conversationId)
+//                        query.whereEqualTo("userId",NowUser.getInstant().nowAVuser.objectId)
+//                        query.findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
+//                            override fun onComplete() {}
+//
+//                            override fun onSubscribe(d: Disposable) {}
+//
+//                            override fun onNext(t: List<AVObject>) {
+//                                if (t.isEmpty()){
+//                                    EventBus.getDefault().postSticky(OnBackgroundEvent{
+//                                        val conversationObject = AVObject("UserConversation")
+//                                        conversationObject.put("userId",NowUser.getInstant().nowAVuser.objectId)
+//                                        conversationObject.put("conversationId",conversation.conversationId)
+//                                        conversationObject.save()
+//                                    })
+//                                }
+//                            }
+//                            override fun onError(e: Throwable) {}
+//                        })
+//
+//                    })
+//                }
+//            }
+//        })
+//        return id
     }
 
     fun getUser(id:String):LiveData<AVObject>{

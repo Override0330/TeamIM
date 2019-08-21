@@ -4,27 +4,26 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import cn.leancloud.AVFile
 import cn.leancloud.AVObject
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.callback.AVIMConversationCallback
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
+import cn.leancloud.im.v2.messages.AVIMImageMessage
 import cn.leancloud.im.v2.messages.AVIMTextMessage
-import com.alibaba.fastjson.JSONObject
-import com.override0330.teamim.AddMessageItem
+import com.override0330.teamim.AddMessageItemEvent
 import com.override0330.teamim.GetResultState
 import com.override0330.teamim.OnBackgroundEvent
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.MessageRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
-import com.override0330.teamim.model.bean.MessageItem
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.db.ConversationDB
 import com.override0330.teamim.model.db.MessageDB
 import com.override0330.teamim.model.db.UserDB
 import org.greenrobot.eventbus.EventBus
-import java.util.*
 
 /**
  * @data 2019-08-19
@@ -111,9 +110,12 @@ class ConversationViewModel :BaseViewModel(){
                     //发送成功
                     state.postValue(GetResultState.SUCCESS)
                     //实时更新
-                    val messageDB = MessageDB(msg.messageId,msg.from,conversation!!.conversationId,System.currentTimeMillis(),msg.content)
-                    println(msg.content)
-                    EventBus.getDefault().postSticky(AddMessageItem(messageDB))
+                    if (conversation!!.members.size==2){
+                        //如果是单聊更新
+                        val messageDB = MessageDB(msg.messageId,msg.from,conversation!!.conversationId,System.currentTimeMillis(),msg.content,"")
+                        println(msg.content)
+                        EventBus.getDefault().postSticky(AddMessageItemEvent(messageDB))
+                    }
 //                    //更新conversation的最新消息
 //                    EventBus.getDefault().postSticky(OnBackgroundEvent{
 //                        val conversationDB = conversationRepository.getConversationById(msg.conversationId)
@@ -129,6 +131,39 @@ class ConversationViewModel :BaseViewModel(){
             }
         })
         return state
+    }
+
+    //发送图片消息
+    fun sendImageMessage(uri:String):LiveData<SendState>{
+        val state = MutableLiveData<SendState>()
+        state.value = SendState.WAITING
+        EventBus.getDefault().postSticky(OnBackgroundEvent{
+            val avFile = AVFile.withAbsoluteLocalPath("image.jpg",uri)
+            val avimImageMessage = AVIMImageMessage(avFile)
+            conversation?.sendMessage(avimImageMessage,object : AVIMConversationCallback() {
+                override fun done(e: AVIMException?) {
+                    if (e==null){
+                        EventBus.getDefault().postSticky(AddMessageItemEvent(
+                            MessageDB(avimImageMessage.messageId,
+                                avimImageMessage.from,
+                                avimImageMessage.conversationId,
+                                avimImageMessage.timestamp,
+                                "",
+                                avimImageMessage.fileUrl)
+                        ))
+                        state.postValue(SendState.SUCCESS)
+                    }else{
+                        e.printStackTrace()
+                        println(e.message)
+                        state.postValue(SendState.FAIL)
+                    }
+                }
+            })
+        })
+        return state
+    }
+    enum class SendState {
+        SUCCESS, FAIL, WAITING
     }
 
     //更新聊天记录
@@ -166,4 +201,5 @@ class ConversationViewModel :BaseViewModel(){
         })
         return data
     }
+
 }

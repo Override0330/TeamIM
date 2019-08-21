@@ -84,6 +84,26 @@ class UserRepository private constructor(){
         return data
     }
 
+    fun getGroupListLiveData(userId:String):LiveData<List<String>>{
+        val data = MutableLiveData<List<String>>()
+        val query = AVQuery<AVObject>("UserConversation")
+        query.whereContainedIn("member", listOf(userId))
+        query.findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
+            override fun onError(e: Throwable) {
+                e.printStackTrace()
+            }
+
+            override fun onNext(t: List<AVObject>) {
+                data.postValue(t.map { it.getString("conversationId") })
+            }
+
+            override fun onComplete() {}
+
+            override fun onSubscribe(d: Disposable) {}
+        })
+        return data
+    }
+
     //从网络中获得某个object
     fun getObjectByIdFromNet(className:String, objectId:String):LiveData<AVObject>{
         val data = MutableLiveData<AVObject>()

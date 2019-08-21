@@ -66,8 +66,8 @@ class MainFragment : BaseFragment(){
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun openChat(openChat: OpenChat){
-        findNavController().navigate(openChat.navigationId,openChat.bundle)
+    fun openChat(openChatEvent: OpenChatEvent){
+        findNavController().navigate(openChatEvent.navigationId,openChatEvent.bundle)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

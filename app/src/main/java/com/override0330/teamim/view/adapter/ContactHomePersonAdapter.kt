@@ -18,7 +18,7 @@ import com.override0330.teamim.model.db.ContactDB
  */
 
 
-class ContactHomeAdapter: RecyclerView.Adapter<ContactHomeAdapter.ViewHolder>(),View.OnClickListener {
+class ContactHomePersonAdapter: RecyclerView.Adapter<ContactHomePersonAdapter.ViewHolder>(),View.OnClickListener {
     var showList = ArrayList<ContactDB>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(BaseApp.context()).inflate(R.layout.recyclerview_item_contacts_person,parent,false)

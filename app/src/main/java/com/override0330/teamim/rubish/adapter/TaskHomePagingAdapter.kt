@@ -1,4 +1,4 @@
-//package com.override0330.teamim.rubish.adapter
+//package com.override0330.teamim.rubish.personAdapter
 //
 //import android.util.Log
 //import android.view.LayoutInflater

@@ -8,12 +8,10 @@
                 name="informationUserItem"
                 type="com.override0330.teamim.model.bean.UserItem"/>
     </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         <ImageView
                 android:id="@+id/iv_information_bg"
                 android:layout_width="match_parent"
@@ -24,7 +22,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 />
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -44,7 +41,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_edit_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="编辑资料"
+                    android:visibility="gone"
+                    android:textColor="@color/colorWhite"
+                    android:layout_marginEnd="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.core.widget.ContentLoadingProgressBar
                 android:id="@+id/progress_bar_information"
                 android:layout_width="match_parent"

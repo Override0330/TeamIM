@@ -66,11 +66,48 @@
             android:paddingEnd="20dp"
             android:drawableStart="@mipmap/ic_search"
             android:id="@+id/et_contact_search"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_contact_list"
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layout_constraintTop_toBottomOf="@+id/et_contact_search"/>
+            android:layout_height="match_parent">
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp">
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:drawableStart="@mipmap/ic_triangle"
+                        android:layout_marginStart="10dp"
+                        android:text="联系人"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_contact_person_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/et_contact_search"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp">
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:drawableStart="@mipmap/ic_triangle"
+                        android:layout_marginStart="10dp"
+                        android:text="团队"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_contact_team_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/et_contact_search"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
 </androidx.appcompat.widget.LinearLayoutCompat>

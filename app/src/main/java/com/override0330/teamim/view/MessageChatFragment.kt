@@ -1,27 +1,32 @@
 package com.override0330.teamim.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.leancloud.im.v2.messages.AVIMTextMessage
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
 import com.override0330.teamim.*
 import com.override0330.teamim.base.BaseViewModelFragment
-import com.override0330.teamim.databinding.FragmentCommunicateDetailBinding
 import com.override0330.teamim.model.db.MessageDB
-import com.override0330.teamim.view.adapter.ChatMessageAdapter
+import com.override0330.teamim.view.adapter.MessageChatAdapter
 import com.override0330.teamim.viewmodel.ConversationViewModel
 import kotlinx.android.synthetic.main.fragment_message_chat.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import kotlin.collections.ArrayList
+import android.app.Activity.RESULT_OK
+import cn.leancloud.AVUser
+
 
 /**
  * @data 2019-08-18
@@ -30,18 +35,15 @@ import kotlin.collections.ArrayList
  */
 
 
-@Suppress("UNCHECKED_CAST")
 class MessageChatFragment :BaseViewModelFragment<ConversationViewModel>(){
     override val viewModelClass: Class<ConversationViewModel>
         get() = ConversationViewModel::class.java
 
-    private val adapter = ChatMessageAdapter()
-    private lateinit var dataBinding:FragmentCommunicateDetailBinding
+    private val adapter = MessageChatAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        dataBinding = DataBindingUtil.inflate(LayoutInflater.from(this.context),R.layout.fragment_message_chat,container,false)
-        return dataBinding.root
+        return LayoutInflater.from(this.context).inflate(R.layout.fragment_message_chat,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,6 +64,7 @@ class MessageChatFragment :BaseViewModelFragment<ConversationViewModel>(){
     private fun initViewById(conversationId:String){
         Log.d("传入的conversationId",conversationId)
         progress_bar_chat.show()
+        //判断是否群聊
         viewModel.getConversation(conversationId).observe(viewLifecycleOwner, Observer {
             //成功拿到
             Log.d("聊天窗口","成功拿到conversation!")
@@ -103,29 +106,78 @@ class MessageChatFragment :BaseViewModelFragment<ConversationViewModel>(){
                     et_message_content.text?.clear()
                 }else{
                     //失败
-                    Toast.makeText(this.context,"得益于LeanCloud的土豆服务器，你可能已经断开连接",Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this.context,"得益于LeanCloud的土豆服务器，你可能已经断开连接",Toast.LENGTH_LONG).show()
                 }
             })
         }
         iv_message_image.setOnClickListener {
             //发送图片的逻辑
+            PictureSelector.create(this)
+                .openGallery(PictureMimeType.ofImage())
+                .maxSelectNum(1)
+                .isCamera(true)
+                .cropCompressQuality(70)
+                .previewImage(true)
+                .enableCrop(true)
+                .forResult(PictureConfig.CHOOSE_REQUEST)
+
+        }
+
+        iv_toolbar_right.setOnClickListener {
+            findNavController().navigate(R.id.action_messageFragment_to_messageCreateGroupFragment)
         }
     }
 
     @Subscribe
     fun receiveMessage(receiveMessageEvent: ReceiveMessageEvent){
         val message = receiveMessageEvent.message
-        addMessage(AddMessageItem(message))
+        addMessage(AddMessageItemEvent(message))
     }
 
     //显示消息
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun addMessage(addMessageItem: AddMessageItem){
+    fun addMessage(addMessageItemEvent: AddMessageItemEvent){
         if (!adapter.showList.isNullOrEmpty()){
             Log.d("增加新消息"," ")
-            adapter.showList.add(addMessageItem.messageItem)
+            adapter.showList.add(addMessageItemEvent.messageItem)
             adapter.notifyItemInserted(adapter.itemCount-1)
             rv_message_list.scrollToPosition(adapter.itemCount-1)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode === RESULT_OK) {
+            when (requestCode) {
+                PictureConfig.CHOOSE_REQUEST -> {
+                    // 图片、视频、音频选择结果回调
+                    val selectList = PictureSelector.obtainMultipleResult(data)
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                    val uri = selectList[0].path
+                    Log.d("debug",uri)
+
+                    progress_bar_chat.show()
+                    viewModel.sendImageMessage(uri).observe(viewLifecycleOwner, Observer {
+                        when(it){
+                            ConversationViewModel.SendState.SUCCESS ->{
+                                progress_bar_chat.hide()
+                                Log.d("发送图片","成功")
+                            }
+                            ConversationViewModel.SendState.FAIL ->{
+                                progress_bar_chat.hide()
+                                Log.d("发送图片","失败")
+                            }
+                            ConversationViewModel.SendState.WAITING ->{
+                                Log.d("发送图片","等待")
+                            }
+                        }
+                    })
+                }
+            }
         }
     }
 }

@@ -7,8 +7,10 @@ import cn.leancloud.im.v2.AVIMMessage
 import cn.leancloud.im.v2.AVIMMessageHandler
 import com.alibaba.fastjson.JSONObject
 import com.override0330.teamim.ReceiveMessageEvent
+import com.override0330.teamim.RefreshMessageBoxEvent
 import com.override0330.teamim.model.db.MessageDB
 import org.greenrobot.eventbus.EventBus
+import kotlin.math.E
 
 /**
  * @data 2019-08-18
@@ -22,9 +24,13 @@ class CustomMessageHandler :AVIMMessageHandler(){
         super.onMessage(message, conversation, client)
         //接受消息回调
         if (message!=null){
-            val messageDB = MessageDB(message.messageId,message.from,message.conversationId,message.timestamp,message.content)
+            val messageDB = MessageDB(message.messageId,message.from,message.conversationId,message.timestamp,message.content,"")
+            //通知聊天窗添加新的消息
             EventBus.getDefault().postSticky(ReceiveMessageEvent(messageDB))
+            //通知消息列表更新
+            EventBus.getDefault().postSticky(RefreshMessageBoxEvent(message.conversationId))
             Log.d("IM 收到消息", message.content)
         }
     }
+
 }

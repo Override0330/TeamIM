@@ -17,14 +17,14 @@ class StartEvent
 
 class OnBackgroundEvent(val event:()->Unit)
 
-class PostAVuser(val user:AVUser)
-
 class ReceiveMessageEvent(val message:MessageDB)
 
 class AddMessageBoxEvent(val conversationItemDB: ConversationDB)
 
-class AddMessageItem(val messageItem: MessageDB)
+class AddMessageItemEvent(val messageItem: MessageDB)
 
-class OpenChat(val bundle: Bundle,val navigationId:Int)
+class OpenChatEvent(val bundle: Bundle, val navigationId:Int)
 
 class ShowOrHideProgressBarEvent(val isShow:Boolean)
+
+class RefreshMessageBoxEvent(val conversationId:String)

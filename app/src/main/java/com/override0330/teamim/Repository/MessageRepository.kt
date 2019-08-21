@@ -68,7 +68,7 @@ class MessageRepository private constructor(){
                 EventBus.getDefault().postSticky(OnBackgroundEvent{
                     if (e==null&&messages!=null){
                         Log.d("更新数据库","目前条数${messages.size}")
-                        val list = messages.map { MessageDB(it.messageId,it.from,it.conversationId,it.timestamp,it.content) }
+                        val list = messages.map { MessageDB(it.messageId,it.from,it.conversationId,it.timestamp,it.content,"") }
                         AppDatabase.getInstant().appDao().insertMessage(list)
                     }
                 })

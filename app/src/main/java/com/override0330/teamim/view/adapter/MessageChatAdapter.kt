@@ -3,12 +3,12 @@ package com.override0330.teamim.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.fastjson.JSONObject
+import com.bumptech.glide.Glide
 import com.override0330.teamim.R
-import com.override0330.teamim.model.bean.MessageItem
 import com.override0330.teamim.model.db.MessageDB
 
 
@@ -19,7 +19,7 @@ import com.override0330.teamim.model.db.MessageDB
  */
 
 
-class ChatMessageAdapter:RecyclerView.Adapter<ChatMessageAdapter.ViewHolder>(), View.OnClickListener{
+class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnClickListener{
     var showList = ArrayList<MessageDB>()
     var onItemOnClickListener: OnItemOnClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +42,9 @@ class ChatMessageAdapter:RecyclerView.Adapter<ChatMessageAdapter.ViewHolder>(), 
         val messageDB = showList[position]
         val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
         holder.content.text = realText
+        if (messageDB.sendImage!=""){
+            Glide.with(holder.itemView.context).load(messageDB.sendImage).into(holder.image)
+        }
         holder.itemView.tag = position
     }
 
@@ -60,6 +63,7 @@ class ChatMessageAdapter:RecyclerView.Adapter<ChatMessageAdapter.ViewHolder>(), 
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val content = view.findViewById<TextView>(R.id.tv_item_message)
+        val image = view.findViewById<ImageView>(R.id.iv_item_image)
     }
 
     interface OnItemOnClickListener{

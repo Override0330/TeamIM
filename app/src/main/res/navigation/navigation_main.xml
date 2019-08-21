@@ -19,6 +19,13 @@
         <argument
                 android:name="conversationId"
                 app:argType="string"/>
+        <action
+                android:id="@+id/action_mainFragment_to_messageCreateGroupFragment"
+                app:destination="@id/messageCreateGroupFragment"/>
+        <argument
+                android:name="isGroup"
+                app:argType="boolean"
+                android:defaultValue="false"/>
     </fragment>
     <fragment
             android:id="@+id/loginRegisterFragment"
@@ -39,12 +46,12 @@
         <action
                 android:id="@+id/action_contactFragment_to_addFriendFragment"
                 app:destination="@id/addFriendFragment"/>
-        <action
-                android:id="@+id/action_contactFragment_to_messageFragment"
-                app:destination="@id/messageFragment"/>
         <argument
-                android:name="conversationId"
+                android:name="userId"
                 app:argType="string"/>
+        <action
+                android:id="@+id/action_contactFragment_to_personFragment"
+                app:destination="@id/personFragment"/>
     </fragment>
     <fragment
             android:id="@+id/addFriendFragment"
@@ -62,7 +69,7 @@
             android:id="@+id/personFragment"
             android:name="com.override0330.teamim.view.PersonInformationFragment"
             android:label="PersonFragment"
-            tools:layout="@layout/fragment_imformation">
+            tools:layout="@layout/fragment_information">
         <argument
                 android:name="conversationId"
                 app:argType="string"/>
@@ -73,10 +80,42 @@
                 app:exitAnim="@anim/fragment_close_exit"
                 app:popEnterAnim="@anim/fragment_close_enter"
                 app:popExitAnim="@anim/fragment_close_exit"/>
+        <action
+                android:id="@+id/action_personFragment_to_personInformagtionEditFragment"
+                app:destination="@id/personInformagtionEditFragment"/>
+        <argument
+                android:name="isGroup"
+                app:argType="boolean"
+                android:defaultValue="false"/>
     </fragment>
     <fragment
             android:id="@+id/messageFragment"
             android:name="com.override0330.teamim.view.MessageChatFragment"
             android:label="MessageFragment"
-            tools:layout="@layout/fragment_message_chat"/>
+            tools:layout="@layout/fragment_message_chat">
+        <action
+                android:id="@+id/action_messageFragment_to_messageCreateGroupFragment"
+                app:destination="@id/messageCreateGroupFragment"/>
+    </fragment>
+    <fragment
+            android:id="@+id/personInformagtionEditFragment"
+            android:name="com.override0330.teamim.view.PersonInformagtionEditFragment"
+            android:label="PersonInformagtionEditFragment"
+            tools:layout="@layout/fragment_contact_information_edit"/>
+    <fragment
+            android:id="@+id/messageCreateGroupFragment"
+            android:name="com.override0330.teamim.view.MessageCreateGroupFragment"
+            android:label="MessageCreateGroupFragment"
+            tools:layout="@layout/fragment_create_group">
+        <action
+                android:id="@+id/action_messageCreateGroupFragment_to_messageFragment"
+                app:destination="@id/messageFragment"/>
+        <argument
+                android:name="conversationId"
+                app:argType="string"/>
+        <argument
+                android:name="isGroup"
+                app:argType="boolean"
+                android:defaultValue="true"/>
+    </fragment>
 </navigation>

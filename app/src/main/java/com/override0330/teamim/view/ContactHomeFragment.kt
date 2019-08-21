@@ -5,16 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.override0330.teamim.BR
+import cn.leancloud.AVUser
 import com.override0330.teamim.R
-import com.override0330.teamim.base.BaseRecyclerViewAdapter
 import com.override0330.teamim.base.BaseViewModelFragment
-import com.override0330.teamim.databinding.RecyclerviewItemContactsPersonBinding
-import com.override0330.teamim.model.bean.UserItem
-import com.override0330.teamim.view.adapter.ContactHomeAdapter
+import com.override0330.teamim.view.adapter.ContactHomePersonAdapter
+import com.override0330.teamim.view.adapter.ContactHomeTeamAdapter
 import com.override0330.teamim.viewmodel.ContactViewModel
 import kotlinx.android.synthetic.main.fragment_contact_home.*
 
@@ -30,7 +27,8 @@ class ContactHomeFragment : BaseViewModelFragment<ContactViewModel>(){
         get() = ContactViewModel::class.java
 
 
-    val adapter = ContactHomeAdapter()
+    private val personAdapter = ContactHomePersonAdapter()
+    private val teamAdapter = ContactHomeTeamAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -41,26 +39,36 @@ class ContactHomeFragment : BaseViewModelFragment<ContactViewModel>(){
         super.onViewCreated(view, savedInstanceState)
         //加载通讯录列表
         progress_bar_contact.show()
-        rv_contact_list.layoutManager = LinearLayoutManager(this.context)
-        rv_contact_list.adapter = adapter
+        rv_contact_person_list.layoutManager = LinearLayoutManager(this.context)
+        rv_contact_person_list.adapter = personAdapter
         viewModel.getContactListLiveData().observe(viewLifecycleOwner, Observer {
             //更新通讯录列表
-            adapter.showList = it
-            adapter.notifyDataSetChanged()
-            progress_bar_contact.show()
-            adapter.onItemClickListener = object :ContactHomeAdapter.OnItemClickListener{
+            personAdapter
+            progress_bar_contact.hide()
+            personAdapter.onItemClickListener = object :ContactHomePersonAdapter.OnItemClickListener{
                 override fun onItemClick(view: View, position: Int) {
-                    //生成conversation然后传出去
-                    val contactDB = adapter.showList[position]
-                    val attr = HashMap<String,Any>()
-                    viewModel.createConversation(listOf(contactDB.userId),contactDB.userName,attr).observe(viewLifecycleOwner,
-                        Observer {
-                            val args = ContactHomeFragmentArgs.Builder(it).build().toBundle()
-                            findNavController().navigate(R.id.action_contactFragment_to_messageFragment,args)
-                        })
+                    val args = ContactHomeFragmentArgs.Builder(personAdapter.showList[position].userId).build().toBundle()
+                    findNavController().navigate(R.id.action_contactFragment_to_personFragment,args)
                 }
             }
         })
+
+        rv_contact_team_list.layoutManager = LinearLayoutManager(this.context)
+        rv_contact_team_list.adapter = teamAdapter
+        progress_bar_contact.show()
+        viewModel.getGroupListLiveData(AVUser.currentUser().objectId).observe(viewLifecycleOwner, Observer {
+            teamAdapter.submitList(it)
+            progress_bar_contact.hide()
+            teamAdapter.onItemClickListener = object :ContactHomeTeamAdapter.OnItemClickListener{
+                override fun onItemClick(view: View, position: Int) {
+                    val args = ContactHomeFragmentArgs.Builder(teamAdapter.showList!![position].conversationId).build().toBundle()
+                    //跳转到团队详情
+                    findNavController()
+                }
+            }
+        })
+
+
         iv_toolbar_left.setOnClickListener {
             //添加好友的逻辑
             findNavController().navigate(R.id.action_contactFragment_to_addFriendFragment)

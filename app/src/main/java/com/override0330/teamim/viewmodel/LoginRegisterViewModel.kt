@@ -3,16 +3,17 @@ package com.override0330.teamim.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.leancloud.AVException
 import cn.leancloud.AVUser
 import cn.leancloud.im.v2.AVIMClient
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.AVIMMessageManager
 import cn.leancloud.im.v2.callback.AVIMClientCallback
+import cn.leancloud.im.v2.messages.AVIMImageMessage
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.net.CustomConversationEventHandler
 import com.override0330.teamim.net.CustomMessageHandler
+import com.override0330.teamim.net.ImageMessageHandler
 import com.override0330.teamim.net.LearnCloudNetHelper
 import io.reactivex.disposables.Disposable
 
@@ -47,6 +48,7 @@ class LoginRegisterViewModel : BaseViewModel(){
                                 //设置全局监听
                                 AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
                                 AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
+                                AVIMMessageManager.registerMessageHandler(AVIMImageMessage::class.java,ImageMessageHandler())
                                 state.postValue(LoginRegisterState.SUCCESS)
                             }
                         }

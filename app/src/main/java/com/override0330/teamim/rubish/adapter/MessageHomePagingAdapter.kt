@@ -1,4 +1,4 @@
-//package com.override0330.teamim.rubish.adapter
+//package com.override0330.teamim.rubish.personAdapter
 //
 ///**
 // * @data 2019-08-16
