@@ -21,15 +21,17 @@ class MessageDB(@PrimaryKey val messageId:String,
                 val sendContent:String,
                 val sendImage:String)
 
-//存放对话的table、包括群聊、单聊
+//存放应该在消息界面显示的对话
 @Entity(tableName = "conversation")
-@TypeConverters(StringListConverter::class)
-class ConversationDB(@PrimaryKey var conversationId: String,
-                     var title:String,
-                     var member: List<String>,
-                     var avatar: String,
-                     var updateTime: Long,
-                     var lastMessage: String)
+class ConversationDB(@PrimaryKey var conversationId: String)
+
+//存放对话的基本信息
+@Entity(tableName = "conversation_info")
+class ConversationInfoDB(@PrimaryKey val conversationId: String,
+                         val avatarC:String,
+                         val avatarM:String,
+                         val nameC:String,
+                         val nameM:String)
 
 //本地存储的联系人
 @Entity(tableName = "contact")

@@ -19,9 +19,9 @@ import com.override0330.teamim.model.db.MessageDB
  */
 
 
-class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnClickListener{
+class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnLongClickListener{
     var showList = ArrayList<MessageDB>()
-    var onItemOnClickListener: OnItemOnClickListener? = null
+    var onItemLongClickListener: OnItemLongClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view:View
         if (viewType==1){
@@ -30,6 +30,7 @@ class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), 
         }else{
             //自己的消息
             view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_me,parent,false)
+            view.setOnLongClickListener(this)
         }
         return ViewHolder(view)
     }
@@ -40,8 +41,10 @@ class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val messageDB = showList[position]
-        val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
-        holder.content.text = realText
+        if (messageDB.sendContent!=""){
+            val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
+            holder.content.text = realText
+        }
         if (messageDB.sendImage!=""){
             Glide.with(holder.itemView.context).load(messageDB.sendImage).into(holder.image)
         }
@@ -66,14 +69,15 @@ class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), 
         val image = view.findViewById<ImageView>(R.id.iv_item_image)
     }
 
-    interface OnItemOnClickListener{
+    interface OnItemLongClickListener{
         fun onItemClick(itemView: View, position: Int)
     }
 
-    override fun onClick(p0: View?) {
+    override fun onLongClick(p0: View?): Boolean {
         if (p0!=null){
-            onItemOnClickListener?.onItemClick(p0,p0.tag as? Int ?:-1)
+            onItemLongClickListener?.onItemClick(p0,p0.tag as? Int ?:-1)
         }
+        return true
     }
 
     fun submitShowList(showList:ArrayList<MessageDB>){

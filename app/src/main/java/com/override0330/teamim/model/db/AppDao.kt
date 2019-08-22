@@ -42,8 +42,8 @@ interface AppDao {
     @Query("SELECT * FROM message WHERE conversationId =:conversationId ORDER BY timestamp ASC")
     fun getAllMessageById(conversationId:String):LiveData<List<MessageDB>>
 
-    @Query("SELECT * FROM conversation ORDER BY updateTime DESC")
-    fun getAllConversation():LiveData<List<ConversationDB>>
+    @Query("SELECT * FROM conversation")
+    fun getAllConversation():List<ConversationDB>
 
     @Query("SELECT * FROM conversation WHERE conversationId =:id")
     fun getConversationById(id:String):ConversationDB
@@ -56,4 +56,5 @@ interface AppDao {
 
     @Query("SELECT * FROM contact WHERE userId =:userId")
     fun getUserFromContactById(userId:String):ContactDB
+
 }

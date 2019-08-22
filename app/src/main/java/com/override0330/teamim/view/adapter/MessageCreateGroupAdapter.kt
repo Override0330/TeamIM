@@ -7,6 +7,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import cn.leancloud.AVUser
 import com.bumptech.glide.Glide
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseApp
@@ -20,7 +21,7 @@ import com.override0330.teamim.model.db.ContactDB
 
 
 class MessageCreateGroupAdapter:RecyclerView.Adapter<MessageCreateGroupAdapter.ViewHolder>(),View.OnClickListener {
-    var showList = ArrayList<ContactDB>()
+    var showList = ArrayList<AVUser>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(BaseApp.context()).inflate(R.layout.recyclerview_item_create_group,parent,false)
@@ -35,8 +36,8 @@ class MessageCreateGroupAdapter:RecyclerView.Adapter<MessageCreateGroupAdapter.V
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contactDB = showList[position]
-        Glide.with(BaseApp.context()).load(contactDB.avatar).into(holder.avatar)
-        holder.name.text = contactDB.userName
+        Glide.with(BaseApp.context()).load(contactDB.getString("avatar")).into(holder.avatar)
+        holder.name.text = contactDB.username
         holder.itemView.setOnClickListener(this)
         holder.checkBox.isClickable = false
         holder.itemView.tag = position
@@ -56,7 +57,7 @@ class MessageCreateGroupAdapter:RecyclerView.Adapter<MessageCreateGroupAdapter.V
         }
     }
 
-    fun submitShowList(list: ArrayList<ContactDB>){
+    fun submitShowList(list: ArrayList<AVUser>){
         showList = list
         notifyDataSetChanged()
     }

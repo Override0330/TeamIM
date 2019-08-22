@@ -6,7 +6,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import cn.leancloud.AVObject
+import cn.leancloud.AVUser
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.model.db.ContactDB
@@ -19,7 +23,7 @@ import com.override0330.teamim.model.db.ContactDB
 
 
 class ContactHomePersonAdapter: RecyclerView.Adapter<ContactHomePersonAdapter.ViewHolder>(),View.OnClickListener {
-    var showList = ArrayList<ContactDB>()
+    var showList = ArrayList<AVUser>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(BaseApp.context()).inflate(R.layout.recyclerview_item_contacts_person,parent,false)
         return ViewHolder(view)
@@ -33,9 +37,12 @@ class ContactHomePersonAdapter: RecyclerView.Adapter<ContactHomePersonAdapter.Vi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contactDB = showList[position]
-        Glide.with(BaseApp.context()).load(contactDB.avatar).into(holder.avatar)
-        holder.name.text = contactDB.userName
-        holder.detail.text = contactDB.geQian
+        Glide.with(BaseApp.context()).load(contactDB.getString("avatar")).apply(
+            RequestOptions.bitmapTransform(
+                CircleCrop()
+            )).into(holder.avatar)
+        holder.name.text = contactDB.username
+        holder.detail.text = contactDB.getString("geQian")
         holder.itemView.setOnClickListener(this)
         holder.itemView.tag = position
     }
@@ -52,5 +59,10 @@ class ContactHomePersonAdapter: RecyclerView.Adapter<ContactHomePersonAdapter.Vi
 
     interface OnItemClickListener{
         fun onItemClick(view:View,position:Int)
+    }
+
+    fun submitList(list:ArrayList<AVUser>){
+        showList = list
+        notifyDataSetChanged()
     }
 }

@@ -3,18 +3,24 @@ package com.override0330.teamim.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cn.leancloud.AVInstallation
+import cn.leancloud.AVObject
 import cn.leancloud.AVUser
 import cn.leancloud.im.v2.AVIMClient
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.AVIMMessageManager
 import cn.leancloud.im.v2.callback.AVIMClientCallback
 import cn.leancloud.im.v2.messages.AVIMImageMessage
+import cn.leancloud.push.PushService
+import com.override0330.teamim.MainActivity
+import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.net.CustomConversationEventHandler
 import com.override0330.teamim.net.CustomMessageHandler
 import com.override0330.teamim.net.ImageMessageHandler
 import com.override0330.teamim.net.LearnCloudNetHelper
+import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
 /**
@@ -49,6 +55,19 @@ class LoginRegisterViewModel : BaseViewModel(){
                                 AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
                                 AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
                                 AVIMMessageManager.registerMessageHandler(AVIMImageMessage::class.java,ImageMessageHandler())
+                                AVInstallation.getCurrentInstallation().saveInBackground().subscribe(object :Observer<AVObject>{
+                                    override fun onComplete() {}
+
+                                    override fun onSubscribe(d: Disposable) {}
+
+                                    override fun onNext(t: AVObject) {
+                                        val installationId = AVInstallation.getCurrentInstallation().installationId
+                                        Log.d("installationId",installationId)
+                                    }
+
+                                    override fun onError(e: Throwable) {}
+                                })
+                                PushService.setDefaultPushCallback(BaseApp.context(),MainActivity::class.java)
                                 state.postValue(LoginRegisterState.SUCCESS)
                             }
                         }

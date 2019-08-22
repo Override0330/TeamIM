@@ -49,4 +49,5 @@ class CustomConversationEventHandler :AVIMConversationEventHandler(){
         super.onInfoChanged(client, conversation, attr, operator)
         Log.d("LeanCloud","聊天发生了改变")
     }
+
 }

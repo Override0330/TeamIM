@@ -1,4 +1,4 @@
-package com.override0330.teamim.view
+package com.override0330.teamim.view.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_task_main.*
 class TaskFragment : BaseViewModelFragment<TaskViewModel>(){
     override val viewModelClass: Class<TaskViewModel>
         get() = TaskViewModel::class.java
-//    val personAdapter = TaskHomePagingAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -30,10 +29,8 @@ class TaskFragment : BaseViewModelFragment<TaskViewModel>(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        rv_task_main.personAdapter = personAdapter
         rv_task_main.layoutManager = LinearLayoutManager(BaseApp.context())
-//        viewModel.getContactListLiveData().observe(viewLifecycleOwner, Observer {
-//            personAdapter.submitList(it)
-//        })
+//        rv_task_main.adapter =
+
     }
 }

@@ -1,4 +1,4 @@
-package com.override0330.teamim.view
+package com.override0330.teamim.view.home
 
 import android.os.Bundle
 import android.view.LayoutInflater

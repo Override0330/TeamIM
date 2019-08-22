@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import cn.leancloud.im.v2.AVIMConversation
 import com.bumptech.glide.Glide
-import com.override0330.teamim.OnBackgroundEvent
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
-import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.base.BaseApp
-import org.greenrobot.eventbus.EventBus
+import com.override0330.teamim.model.bean.UserTeam
 
 /**
  * @data 2019-08-21
@@ -22,9 +21,10 @@ import org.greenrobot.eventbus.EventBus
 
 
 class ContactHomeTeamAdapter : RecyclerView.Adapter<ContactHomeTeamAdapter.ViewHolder>(), View.OnClickListener {
-    var showList:List<AVIMConversation>? = null
+    var showList:List<UserTeam>? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(BaseApp.context()).inflate(R.layout.recyclerview_item_contacts_team,parent,false)
+        view.setOnClickListener(this)
         return ViewHolder(view)
     }
 
@@ -37,15 +37,15 @@ class ContactHomeTeamAdapter : RecyclerView.Adapter<ContactHomeTeamAdapter.ViewH
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (showList!=null){
             val conversation = showList!![position]
-            println(conversation.get("avatar").toString())
-            Glide.with(BaseApp.context()).load(conversation.get("avatar")).into(holder.avatar)
+            Glide.with(BaseApp.context()).load(conversation.avatar).apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.avatar)
             holder.name.text = conversation.name
         }
+        holder.itemView.tag = position
 
     }
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val avatar: ImageView = view.findViewById<ImageView>(R.id.iv_item_team_avatar)
+        val avatar: ImageView = view.findViewById(R.id.iv_item_team_avatar)
         val name: TextView = view.findViewById(R.id.tv_item_team_name)
     }
 
@@ -57,7 +57,7 @@ class ContactHomeTeamAdapter : RecyclerView.Adapter<ContactHomeTeamAdapter.ViewH
         fun onItemClick(view: View, position:Int)
     }
 
-    fun submitList(list: List<AVIMConversation>){
+    fun submitList(list: List<UserTeam>){
         showList = list
         notifyDataSetChanged()
     }

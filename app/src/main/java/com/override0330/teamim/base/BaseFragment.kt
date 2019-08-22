@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.override0330.teamim.OnBackgroundEvent
 import com.override0330.teamim.StartEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -23,10 +24,6 @@ open class BaseFragment :Fragment(){
         EventBus.getDefault().register(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
@@ -34,6 +31,11 @@ open class BaseFragment :Fragment(){
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onStartEvent(event:StartEvent) {
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC,sticky = true)
+    fun runOnBackground(onBackgroundEvent: OnBackgroundEvent){
+        run(onBackgroundEvent.event)
     }
 
 }

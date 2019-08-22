@@ -4,18 +4,16 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import cn.leancloud.AVUser
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMException
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
-import com.override0330.teamim.GetResultState
 import com.override0330.teamim.OnBackgroundEvent
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
-import com.override0330.teamim.model.bean.UserItem
-import com.override0330.teamim.model.db.ContactDB
-import com.override0330.teamim.model.db.ConversationDB
+import com.override0330.teamim.model.bean.UserTeam
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -29,21 +27,28 @@ class ContactViewModel : BaseViewModel(){
     private val userRepository = UserRepository.getInstant()
     private val conversationRepository = ConversationRepository.getInstant()
 
-    fun getContactListLiveData(): LiveData<ArrayList<ContactDB>>{
-        val list = MutableLiveData<ArrayList<ContactDB>>()
+    fun getContactListLiveData(): LiveData<ArrayList<AVUser>>{
+        val list = MutableLiveData<ArrayList<AVUser>>()
         userRepository.getContactListLiveData(lifecycleOwner).observe(lifecycleOwner, Observer {
-            val arrayList = ArrayList<ContactDB>()
+            val arrayList = ArrayList<AVUser>()
             arrayList.addAll(it)
             list.postValue(arrayList)
         })
         return list
     }
 
-    fun getGroupListLiveData(userId:String): LiveData<List<AVIMConversation>>{
-        val list = MutableLiveData<List<AVIMConversation>>()
+    fun getTeamListLiveData(userId:String): LiveData<List<UserTeam>>{
+        val list = MutableLiveData<List<UserTeam>>()
         userRepository.getGroupListLiveData(userId).observe(lifecycleOwner, Observer {
+            Log.d("拿到团队id列表","${it.size}")
             EventBus.getDefault().postSticky(OnBackgroundEvent{
-                it.map { conversationRepository.getConversationFromNetById(it) }
+                list.postValue(it.map {
+                    UserTeam(it.getString("conversationId"),
+                        it.getString("name"),
+                        it.getList("member") as List<String>,
+                        it.getString("avatar"),
+                        it.getString("detail"))
+                })
             })
         })
         return list

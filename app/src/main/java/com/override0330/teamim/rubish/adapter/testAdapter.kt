@@ -21,7 +21,7 @@
 //                                                    private val dataBindingId:Int,
 //                                                    private var showList:List<V>?):
 //    RecyclerView.Adapter<TestAdapter.ViewHolder<V>>(), View.OnClickListener {
-//    var onItemOnClickListener: OnItemOnClickListener? = null
+//    var onItemLongClickListener: OnItemLongClickListener? = null
 //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<V> {
 //        val dataBinding:ViewDataBinding
 //        if (viewType==1){
@@ -56,13 +56,13 @@
 //        }
 //    }
 //
-//    interface OnItemOnClickListener {
+//    interface OnItemLongClickListener {
 //        fun onItemClick(itemView: View, position: Int)
 //    }
 //
 //    override fun onClick(p0: View?) {
 //        if (p0 != null) {
-//            onItemOnClickListener?.onItemClick(p0, p0.tag as? Int ?: -1)
+//            onItemLongClickListener?.onItemClick(p0, p0.tag as? Int ?: -1)
 //        }
 //    }
 //

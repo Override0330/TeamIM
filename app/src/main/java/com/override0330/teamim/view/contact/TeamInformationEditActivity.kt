@@ -1,14 +1,14 @@
-package com.override0330.teamim.view
+package com.override0330.teamim.view.contact
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ObbInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.Observer
 import cn.leancloud.AVObject
 import cn.leancloud.AVUser
 import com.bumptech.glide.Glide
@@ -16,11 +16,11 @@ import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.override0330.teamim.R
-import com.override0330.teamim.base.BaseViewModelFragment
-import com.override0330.teamim.viewmodel.PersonInformationEditViewModel
-import io.reactivex.Observer
+import com.override0330.teamim.base.BaseViewModelActivity
+import com.override0330.teamim.viewmodel.TeamInformationEditViewModel
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_contact_information_edit.*
+import kotlinx.android.synthetic.main.fragment_team_information_edit.*
 
 /**
  * @data 2019-08-21
@@ -29,25 +29,31 @@ import kotlinx.android.synthetic.main.fragment_contact_information_edit.*
  */
 
 
-class PersonInformagtionEditFragment :BaseViewModelFragment<PersonInformationEditViewModel>(){
-    override val viewModelClass: Class<PersonInformationEditViewModel>
-        get() = PersonInformationEditViewModel::class.java
+class TeamInformationEditActivity :BaseViewModelActivity<TeamInformationEditViewModel>(){
+    override val viewModelClass: Class<TeamInformationEditViewModel>
+        get() = TeamInformationEditViewModel::class.java
 
-    private var nowUserAvatarUrl: String = AVUser.currentUser().getString("avatar")
+    var nowAvatarUrl = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_contact_information_edit,container,false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_team_information_edit)
+        val conversationId = intent.getStringExtra("conversationId")
+        if (conversationId!=null){
+            initView(conversationId)
+        }else{
+            finish()
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val user = AVUser.currentUser()
-        et_edit_username.setText(user.username)
-        et_edit_geqian.setText(user.getString("geQian"))
-        Glide.with(this).load(nowUserAvatarUrl).into(iv_edit_avatar)
-
-        iv_edit_avatar.setOnClickListener {
+    private fun initView(conversationId:String){
+        viewModel.getTeam(conversationId).observe(this, Observer {
+            //拿到Team信息
+            Glide.with(this).load(it.avatar).into(iv_edit_team_avatar)
+            et_edit_team_name.setText(it.name)
+            et_edit_team_detail.setText(it.detail)
+        })
+        iv_edit_team_avatar.setOnClickListener {
             PictureSelector.create(this)
                 .openGallery(PictureMimeType.ofImage())
                 .maxSelectNum(1)
@@ -60,24 +66,24 @@ class PersonInformagtionEditFragment :BaseViewModelFragment<PersonInformationEdi
 
         tv_save_information.setOnClickListener {
             Log.d("点击按钮","保存")
-            val user = AVUser.createWithoutData("_User",AVUser.currentUser().objectId)
-            user.put("username",et_edit_username.text.toString())
-            user.put("geQian",et_edit_geqian.text.toString())
-            user.put("avatar",nowUserAvatarUrl)
-            user.saveInBackground().safeSubscribe(object :Observer<AVObject>{
+            val user = AVUser.createWithoutData("UserTeam", AVUser.currentUser().objectId)
+            user.put("name",et_edit_team_name.text.toString())
+            user.put("detail",et_edit_team_detail.text.toString())
+            user.put("avatar",nowAvatarUrl)
+            user.saveInBackground().safeSubscribe(object : io.reactivex.Observer<AVObject> {
                 override fun onComplete() {}
 
                 override fun onSubscribe(d: Disposable) {}
 
                 override fun onNext(t: AVObject) {
-                    Log.d("更新User信息","更细成功")
-                    Toast.makeText(this@PersonInformagtionEditFragment.context,"更新个人信息成功",Toast.LENGTH_LONG).show()
-                    findNavController().popBackStack()
+                    Log.d("更新User信息","更新成功")
+                    Toast.makeText(this@TeamInformationEditActivity,"更新团队信息成功", Toast.LENGTH_LONG).show()
+                    finish()
                 }
 
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
-                    Log.d("更新User信息","更细失败")
+                    Log.d("更新User信息","更新失败")
                 }
             })
         }
@@ -103,9 +109,10 @@ class PersonInformagtionEditFragment :BaseViewModelFragment<PersonInformationEdi
                         uri = media.compressPath
                     }
                     Log.d("debug",uri)
-                    viewModel.uploadImage(uri).observe(viewLifecycleOwner,androidx.lifecycle.Observer {
-                        Glide.with(this).load(it).into(iv_edit_avatar)
-                        nowUserAvatarUrl = it
+
+                    viewModel.uploadImage(uri).observe(this, Observer {
+                        nowAvatarUrl = it
+                        Glide.with(this).load(it).into(iv_edit_team_avatar)
                     })
                 }
             }

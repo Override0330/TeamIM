@@ -27,5 +27,4 @@ class NowUser private constructor(){
     lateinit var nowClient:AVIMClient
 
     //垃圾sdk，我选择本地消息盒子
-    val conversationHashMap = HashMap<String,AVIMConversation>()
 }

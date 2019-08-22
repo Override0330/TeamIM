@@ -20,10 +20,10 @@ class MessageCreateGroupViewModel :BaseViewModel(){
     private val userRepository = UserRepository.getInstant()
     private val conversationRepository = ConversationRepository.getInstant()
 
-    fun getContactListLiveData(): LiveData<ArrayList<ContactDB>> {
-        val list = MutableLiveData<ArrayList<ContactDB>>()
+    fun getContactListLiveData(): LiveData<ArrayList<AVUser>> {
+        val list = MutableLiveData<ArrayList<AVUser>>()
         userRepository.getContactListLiveData(lifecycleOwner).observe(lifecycleOwner, Observer {
-            val arrayList = ArrayList<ContactDB>()
+            val arrayList = ArrayList<AVUser>()
             arrayList.addAll(it)
             list.postValue(arrayList)
         })

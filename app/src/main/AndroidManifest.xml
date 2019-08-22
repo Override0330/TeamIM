@@ -26,13 +26,22 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.LoginRegisterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".view.message.MessageChatActivity"/>
+        <activity android:name=".view.message.MessageCreateGroupActivity"/>
+        <activity android:name=".view.contact.ContactAddFriendActivity"/>
+        <activity android:name=".view.contact.ContactHomeActivity"/>
+        <activity android:name=".view.contact.PersonInformagtionEditActivity"/>
+        <activity android:name=".view.contact.PersonInformationActivity"/>
+        <activity android:name=".view.contact.TeamInformationActivity"/>
+        <activity android:name=".view.contact.TeamInformationEditActivity"/>
     </application>
 
 </manifest>

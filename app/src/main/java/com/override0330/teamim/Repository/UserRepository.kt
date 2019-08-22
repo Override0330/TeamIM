@@ -73,28 +73,53 @@ class UserRepository private constructor(){
         return data
     }
 
-    //从数据库中拿取联系人列表
-    fun getContactListLiveData(lifecycleOwner: LifecycleOwner): LiveData<List<ContactDB>> {
-        val data = MutableLiveData<List<ContactDB>>()
-        database.appDao().getAllContactList().observe(lifecycleOwner, Observer {
-            data.postValue(it)
+    //拿取联系人列表
+    fun getContactListLiveData(lifecycleOwner: LifecycleOwner): LiveData<List<AVUser>> {
+        val data = MutableLiveData<List<AVUser>>()
+//        database.appDao().getAllContactList().observe(lifecycleOwner, Observer {
+//            data.postValue(it)
+//        })
+        getContactIdListFromNet().observe(lifecycleOwner, Observer {
+            EventBus.getDefault().postSticky(OnBackgroundEvent{
+                val list = it.map { getUserFromNetNow(it) }
+                data.postValue(list)
+            })
         })
-        //启动网络请求更新数据库
-        updateContactList(lifecycleOwner)
         return data
     }
 
-    fun getGroupListLiveData(userId:String):LiveData<List<String>>{
+    fun getContactIdListFromNet():LiveData<List<String>>{
         val data = MutableLiveData<List<String>>()
-        val query = AVQuery<AVObject>("UserConversation")
+        AVUser.getCurrentUser().followerQuery(AVUser::class.java).findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
+            override fun onComplete() {}
+
+            override fun onSubscribe(d: Disposable) {}
+
+            override fun onNext(t: List<AVObject>) {
+                val idList = t.map { it.getJSONObject("follower").getJSONObject("serverData").getString("objectId") }
+                data.postValue(idList)
+            }
+
+            override fun onError(e: Throwable) {}
+        })
+        return data
+    }
+
+    fun getGroupListLiveData(userId:String):LiveData<List<AVObject>>{
+        val data = MutableLiveData<List<AVObject>>()
+        val query = AVQuery<AVObject>("UserTeam")
+        Log.d("debug", userId)
         query.whereContainedIn("member", listOf(userId))
+        query.cachePolicy = AVQuery.CachePolicy.NETWORK_ELSE_CACHE
         query.findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
             override fun onError(e: Throwable) {
+                Log.d("查询团队列表","失败")
                 e.printStackTrace()
             }
 
             override fun onNext(t: List<AVObject>) {
-                data.postValue(t.map { it.getString("conversationId") })
+                Log.d("查询团队列表","成功 ${t.size}")
+                data.postValue(t)
             }
 
             override fun onComplete() {}
@@ -123,6 +148,12 @@ class UserRepository private constructor(){
             }
         })
         return data
+    }
+
+    fun getUserFromNetNow(id:String):AVUser{
+        val query = AVUser.getQuery()
+        query.whereEqualTo("objectId",id)
+        return query.first
     }
 
     //从网络中获得某个object

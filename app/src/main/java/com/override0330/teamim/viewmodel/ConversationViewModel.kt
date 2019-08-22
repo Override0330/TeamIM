@@ -1,5 +1,6 @@
 package com.override0330.teamim.viewmodel
 
+import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,7 @@ import cn.leancloud.AVFile
 import cn.leancloud.AVObject
 import cn.leancloud.im.v2.AVIMConversation
 import cn.leancloud.im.v2.AVIMException
+import cn.leancloud.im.v2.AVIMMessage
 import cn.leancloud.im.v2.callback.AVIMConversationCallback
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
 import cn.leancloud.im.v2.messages.AVIMImageMessage
@@ -19,11 +21,13 @@ import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.MessageRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
+import com.override0330.teamim.model.ConversationManager
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.db.ConversationDB
 import com.override0330.teamim.model.db.MessageDB
 import com.override0330.teamim.model.db.UserDB
 import org.greenrobot.eventbus.EventBus
+import java.io.File
 
 /**
  * @data 2019-08-19
@@ -33,70 +37,18 @@ import org.greenrobot.eventbus.EventBus
 
 
 class ConversationViewModel :BaseViewModel(){
-    val messageRepository = MessageRepository.getInstant()
-    val conversationRepository = ConversationRepository.getInstant()
-    val userRepository = UserRepository.getInstant()
+    private val messageRepository = MessageRepository.getInstant()
+    private val conversationRepository = ConversationRepository.getInstant()
+    private val userRepository = UserRepository.getInstant()
     //拥有一个对话的实例
     var conversation:AVIMConversation? = null
 
-    //初始化对话实例,需要参数为ConversationId,
-    fun create(list: List<String>,name:String): LiveData<GetResultState> {
-        val state = MutableLiveData<GetResultState>()
-        state.value = GetResultState.WAITING
-        NowUser.getInstant().nowClient.createConversation(list,name,
-            null,
-            false,
-            true,object : AVIMConversationCreatedCallback(){
-                override fun done(conversation: AVIMConversation?, e: AVIMException?) {
-                    Log.d("debug","done回调 ")
-                    e?.printStackTrace()
-                    if (e==null&&conversation!=null){
-                        //创建成功
-                        Log.d("LeanCloud","创建成功")
-                        this@ConversationViewModel.conversation = conversation
-                        //在这里就写入数据库,头像和最新消息设置为空
-                        userRepository.getObjectByIdFromNet("_User",list[0]).observe(lifecycleOwner,
-                            Observer {
-                                val conversationDB = ConversationDB(conversation.conversationId,
-                                    conversation.name,
-                                    conversation.members,
-                                    it.getString("avatar"),
-                                    conversation.updatedAt.time,
-                                    "")
-                                conversationRepository.addConversation(conversationDB)
-                            })
-                        state.postValue(GetResultState.SUCCESS)
-                    }else{
-                        e?.printStackTrace()
-                        Log.d("LeanCloud","创建失败")
-                    }
-                }
-            })
-        return state
-    }
-
-    //对应的view需要的功能有：显示消息及发送的人物，发送消息，点进人物跳转详情
-    //获得聊天记录
-//    fun getMessageList():LiveData<PagedList<MessageDB>> {
-//        return if (conversation!=null){
-//            messageRepository.getMessageList(conversation!!)
-//        }else{
-//            Log.d("获取聊天记录","发生错误：conversation为null")
-//            MutableLiveData<PagedList<MessageDB>>()
-//        }
-//    }
 
     fun getMessageList():LiveData<List<MessageDB>> {
         val list = MutableLiveData<List<MessageDB>>()
         messageRepository.getMessageList2(conversation!!).observe(lifecycleOwner, Observer {
             list.postValue(it)
         })
-//        return if (conversation!=null){
-//            messageRepository.getMessageList(conversation!!)
-//        }else{
-//            Log.d("获取聊天记录","发生错误：conversation为null")
-//            MutableLiveData<List<MessageDB>>()
-//        }
         return list
     }
 
@@ -110,20 +62,9 @@ class ConversationViewModel :BaseViewModel(){
                     //发送成功
                     state.postValue(GetResultState.SUCCESS)
                     //实时更新
-                    if (conversation!!.members.size==2){
-                        //如果是单聊更新
-                        val messageDB = MessageDB(msg.messageId,msg.from,conversation!!.conversationId,System.currentTimeMillis(),msg.content,"")
-                        println(msg.content)
-                        EventBus.getDefault().postSticky(AddMessageItemEvent(messageDB))
-                    }
-//                    //更新conversation的最新消息
-//                    EventBus.getDefault().postSticky(OnBackgroundEvent{
-//                        val conversationDB = conversationRepository.getConversationById(msg.conversationId)
-//                        conversationDB.lastMessage = msg.text
-//                        conversationDB.updateTime = System.currentTimeMillis()
-//                        //提交更改
-//                        conversationRepository.addConversation(conversationDB)
-//                    })
+                    val messageDB = MessageDB(msg.messageId,msg.from,conversation!!.conversationId,System.currentTimeMillis(),msg.content,"")
+                    println(msg.content)
+                    EventBus.getDefault().postSticky(AddMessageItemEvent(messageDB))
                 }else{
                     e.printStackTrace()
                     state.postValue(GetResultState.FAIL)
@@ -133,16 +74,53 @@ class ConversationViewModel :BaseViewModel(){
         return state
     }
 
+    //发送图片消息version2
+    fun sendImageMessageTest(uri: String):LiveData<SendState>{
+        val state = MutableLiveData<SendState>()
+        state.postValue(SendState.WAITING)
+        val localFile = File(uri)
+        val file = AVFile(NowUser.getInstant().nowAVuser.objectId,localFile)
+        file.saveInBackground().subscribe {
+            Log.d("文件保存","成功  ${it.toMap()}")
+            val imageUrl = it.toMap()["url"] as String
+            val avFile = AVFile("test",imageUrl)
+            val message = AVIMImageMessage(avFile)
+            conversation?.sendMessage(message,object :AVIMConversationCallback(){
+                override fun done(e: AVIMException?) {
+                    if (e==null){
+                        Log.d("debug","${message.fileUrl}")
+                        state.postValue(SendState.SUCCESS)
+                        EventBus.getDefault().postSticky(AddMessageItemEvent(
+                            MessageDB(message.messageId,
+                                message.from,
+                                message.conversationId,
+                                message.timestamp,
+                                "",
+                                imageUrl)
+                        ))
+
+                    }else{
+                        e.printStackTrace()
+                    }
+                }
+            })
+        }
+        return state
+    }
+
+
+
     //发送图片消息
     fun sendImageMessage(uri:String):LiveData<SendState>{
         val state = MutableLiveData<SendState>()
-        state.value = SendState.WAITING
-        EventBus.getDefault().postSticky(OnBackgroundEvent{
+        state.postValue(SendState.WAITING)
+        AsyncTask.execute {
             val avFile = AVFile.withAbsoluteLocalPath("image.jpg",uri)
             val avimImageMessage = AVIMImageMessage(avFile)
             conversation?.sendMessage(avimImageMessage,object : AVIMConversationCallback() {
                 override fun done(e: AVIMException?) {
                     if (e==null){
+                        Log.d("发送图片消息","发送成功")
                         EventBus.getDefault().postSticky(AddMessageItemEvent(
                             MessageDB(avimImageMessage.messageId,
                                 avimImageMessage.from,
@@ -153,52 +131,28 @@ class ConversationViewModel :BaseViewModel(){
                         ))
                         state.postValue(SendState.SUCCESS)
                     }else{
+                        Log.d("发送图片消息","发送失败")
                         e.printStackTrace()
                         println(e.message)
                         state.postValue(SendState.FAIL)
                     }
                 }
             })
-        })
+        }
         return state
     }
     enum class SendState {
         SUCCESS, FAIL, WAITING
     }
 
-    //更新聊天记录
-    fun updateMessageList(){
-        conversation?.let { messageRepository.updateMessageDB(it) }
-    }
-
-    //拿到用户信息
-    fun getUser(id:String):LiveData<UserDB>{
-        val data = MutableLiveData<UserDB>()
-        userRepository.getObjectByIdFromNet("_User",id).observe(lifecycleOwner, Observer {
-            data.postValue(UserDB(it.objectId,it.getString("username"),it.getString("geQian"),it.getString("avatar")))
-        })
-        return data
-    }
-
-    //将新收到的信息加进来
-    fun addMessage(messageDB: MessageDB){
-        messageRepository.addMessage(messageDB)
-    }
-
-    fun getConversationObject(conversationId:String):LiveData<AVObject>{
-        val conversation = MutableLiveData<AVObject>()
-        userRepository.getObjectByIdFromNet("_Conversation",conversationId).observe(lifecycleOwner, Observer {
-            conversation.postValue(it)
-        })
-        return conversation
-    }
-
-    //拿到id对应的conversation
-    fun getConversation(id:String):LiveData<AVIMConversation>{
+    //从hashmap拿conversation
+    fun getConversationTest(id:String):LiveData<AVIMConversation>{
         val data = MutableLiveData<AVIMConversation>()
-        EventBus.getDefault().postSticky(OnBackgroundEvent{
-            data.postValue(conversationRepository.getConversationFromNetById(id))
-        })
+        val conversation = ConversationManager.getInstant().conversationHashMap[id]
+        if (conversation!=null){
+            this.conversation = conversation
+            data.postValue(conversation)
+        }
         return data
     }
 

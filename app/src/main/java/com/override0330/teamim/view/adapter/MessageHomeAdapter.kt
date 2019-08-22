@@ -17,7 +17,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
 import com.override0330.teamim.Repository.ConversationRepository
+import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseApp
+import com.override0330.teamim.model.bean.NowUser
+import com.override0330.teamim.model.db.AppDatabase
+import com.override0330.teamim.viewmodel.MessageHomeViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -30,8 +34,8 @@ import kotlin.collections.HashMap
  */
 
 
-class MessageHomeAdapter: RecyclerView.Adapter<MessageHomeAdapter.ViewHolder>(), View.OnClickListener {
-    var showList:MutableList<AVIMConversation>?=null
+class MessageHomeAdapter(val lifecycleOwner: LifecycleOwner): RecyclerView.Adapter<MessageHomeAdapter.ViewHolder>(), View.OnClickListener {
+    var showList:ArrayList<AVIMConversation>?=null
     val conversationIdToPositionMap = HashMap<String,Int>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(BaseApp.context()).inflate(R.layout.recyclerview_item_message, parent, false)
@@ -49,20 +53,22 @@ class MessageHomeAdapter: RecyclerView.Adapter<MessageHomeAdapter.ViewHolder>(),
         val conversation = showList?.get(position)
         if (conversation!=null){
             conversationIdToPositionMap[conversation.conversationId] = position
-            //判断是不是单聊
             if (conversation.members.size==2){
-                //是单聊，显示名字是对方名字
-                if (conversation.creator==AVUser.currentUser().username){
-                    //如果自己是创建者
-                    holder.name.text = conversation.name.split(',')[1]
-                }else{
-                    //否则
-                    holder.name.text = conversation.name.split(',')[0]
-                }
+                //如果是单聊
+                val arrayList = ArrayList<String>()
+                arrayList.addAll(conversation.members)
+                arrayList.remove(NowUser.getInstant().nowAVuser.objectId)
+                UserRepository.getInstant().getObjectByIdFromNet("_User",arrayList[0]).observe(lifecycleOwner,androidx.lifecycle.Observer {
+                    holder.name.text = it.getString("username")
+                    Glide.with(BaseApp.context()).load(it.getString("avatar")).apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.avatar)
+                })
             }else{
-                holder.name.text = conversation.name
+                //如果是群聊
+                ConversationRepository.getInstant().getTeamFromNet(conversation.conversationId).observe(lifecycleOwner,androidx.lifecycle.Observer {
+                    holder.name.text = it.name
+                    Glide.with(BaseApp.context()).load(it.avatar).apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.avatar)
+                })
             }
-
             if(conversation.lastMessage!=null){
                 val realText = JSONObject.parseObject(conversation.lastMessage.content).getString("_lctext")
                 holder.detail.text = realText
@@ -94,8 +100,18 @@ class MessageHomeAdapter: RecyclerView.Adapter<MessageHomeAdapter.ViewHolder>(),
         return s2.substring(0,5)
     }
 
-    fun refresh(list: MutableList<AVIMConversation>){
+    fun refresh(list: ArrayList<AVIMConversation>){
         showList = list
         this.notifyDataSetChanged()
+    }
+
+    fun letItemToTheTop(position: Int){
+        if (showList!=null){
+            val data = showList!![position]
+            showList?.removeAt(position)
+            notifyItemRemoved(position)
+            showList?.add(0,data)
+            notifyItemInserted(0)
+        }
     }
 }

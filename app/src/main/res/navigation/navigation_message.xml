@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/communicateFragment"
-            android:name="com.override0330.teamim.view.MessageHomeFragment"
+            android:name="com.override0330.teamim.view.home.MessageHomeFragment"
             android:label="CommunicateFragment"
             tools:layout="@layout/fragment_message_home"/>
 </navigation>

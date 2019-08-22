@@ -46,7 +46,7 @@ class PersonViewModel : BaseViewModel(){
 //                    id.postValue(conversation.conversationId)
 //                    //将用户Id和对话Id上传至云端
 //                    EventBus.getDefault().postSticky(OnBackgroundEvent{
-//                        val query = AVQuery<AVObject>("UserConversation")
+//                        val query = AVQuery<AVObject>("UserTeam")
 //                        query.whereEqualTo("conversationId",conversation.conversationId)
 //                        query.whereEqualTo("userId",NowUser.getInstant().nowAVuser.objectId)
 //                        query.findInBackground().subscribe(object :io.reactivex.Observer<List<AVObject>>{
@@ -57,7 +57,7 @@ class PersonViewModel : BaseViewModel(){
 //                            override fun onNext(t: List<AVObject>) {
 //                                if (t.isEmpty()){
 //                                    EventBus.getDefault().postSticky(OnBackgroundEvent{
-//                                        val conversationObject = AVObject("UserConversation")
+//                                        val conversationObject = AVObject("UserTeam")
 //                                        conversationObject.put("userId",NowUser.getInstant().nowAVuser.objectId)
 //                                        conversationObject.put("conversationId",conversation.conversationId)
 //                                        conversationObject.save()

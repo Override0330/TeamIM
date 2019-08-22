@@ -18,11 +18,15 @@
             android:paddingEnd="20dp"
             android:drawableStart="@mipmap/ic_search"
             android:id="@+id/et_contact_search"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_message_list"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh_layout_message_home"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layout_constraintTop_toBottomOf="@+id/et_contact_search"/>
+            android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_message_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toBottomOf="@+id/et_contact_search"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>
