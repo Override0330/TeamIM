@@ -13,13 +13,8 @@ import com.override0330.teamim.*
 import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.view.adapter.MessageHomeAdapter
 import com.override0330.teamim.view.message.MessageChatActivity
-import com.override0330.teamim.view.message.MessageCreateGroupActivity
 import com.override0330.teamim.viewmodel.MessageHomeViewModel
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
-import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_message_chat.*
 import kotlinx.android.synthetic.main.fragment_message_home.*
 import kotlinx.android.synthetic.main.fragment_message_home.rv_message_list
 import org.greenrobot.eventbus.EventBus
@@ -47,12 +42,12 @@ class MessageHomeFragment : BaseViewModelFragment<MessageHomeViewModel>() {
         super.onViewCreated(view, savedInstanceState)
         //显示消息列表
         EventBus.getDefault().post(ShowOrHideProgressBarEvent(true))
-        initHome()
         val smartRefreshLayout = view.findViewById<SmartRefreshLayout>(R.id.refresh_layout_message_home)
         smartRefreshLayout.setOnRefreshListener { refreshLayout ->
             initHome()
             refreshLayout.finishRefresh(2000)
         }
+        smartRefreshLayout.autoRefresh()
     }
 
     private fun initHome(){
@@ -65,6 +60,7 @@ class MessageHomeFragment : BaseViewModelFragment<MessageHomeViewModel>() {
             val arrayList = ArrayList<AVIMConversation>()
             arrayList.addAll(it)
             adapter.refresh(arrayList)
+            refresh_layout_message_home.finishRefresh()
         })
         adapter.onItemClickListener=object :MessageHomeAdapter.OnItemClickListener{
             override fun onItemClick(view: View, position: Int) {

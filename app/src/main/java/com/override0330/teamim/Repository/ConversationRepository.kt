@@ -130,6 +130,7 @@ class ConversationRepository private constructor(){
                                         Log.d("上传对话","")
                                         val conversationObject = AVObject("UserTeam")
                                         conversationObject.put("conversationId",conversation.conversationId)
+                                        conversationObject.put("createdBy",NowUser.getInstant().nowAVuser.objectId)
                                         conversationObject.put("name",NowUser.getInstant().nowAVuser.username+"的团队")
                                         conversationObject.put("member",list)
                                         conversationObject.save()
@@ -157,7 +158,10 @@ class ConversationRepository private constructor(){
 
             override fun onNext(t: AVObject) {
                 Log.d("获取Team","成功")
-                val userConversation = UserTeam(t.getString("conversationId"),
+                val userConversation = UserTeam(
+                    t.objectId,
+                    t.getString("conversationId"),
+                    t.getString("createdBy"),
                     t.getString("name"),
                     t.getList("member") as List<String>,
                     t.getString("avatar"),

@@ -7,22 +7,21 @@ import cn.leancloud.AVUser
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
-import com.override0330.teamim.model.db.ContactDB
 
 /**
- * @data 2019-08-21
+ * @data 2019-08-23
  * @author Override0330
  * @description
  */
 
 
-class MessageCreateGroupViewModel :BaseViewModel(){
+class TaskSelectViewModel :BaseViewModel(){
     private val userRepository = UserRepository.getInstant()
     private val conversationRepository = ConversationRepository.getInstant()
 
     fun getContactListLiveData(): LiveData<ArrayList<AVUser>> {
         val list = MutableLiveData<ArrayList<AVUser>>()
-        userRepository.getContactListLiveData(lifecycleOwner).observe(lifecycleOwner, Observer {
+        userRepository.getContactListIncludeSelfLiveData(lifecycleOwner).observe(lifecycleOwner, Observer {
             val arrayList = ArrayList<AVUser>()
             arrayList.addAll(it)
             list.postValue(arrayList)
@@ -30,9 +29,9 @@ class MessageCreateGroupViewModel :BaseViewModel(){
         return list
     }
 
-    fun createGroupConversation(list:List<String>):LiveData<String>{
+    fun createGroupConversation(list:List<String>): LiveData<String> {
         val data = MutableLiveData<String>()
-        conversationRepository.createConversation(list,AVUser.currentUser().username+"的群聊").observe(lifecycleOwner,
+        conversationRepository.createConversation(list, AVUser.currentUser().username+"的群聊").observe(lifecycleOwner,
             Observer {
                 data.postValue(it)
             })

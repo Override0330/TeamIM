@@ -9,4 +9,4 @@ import cn.leancloud.im.v2.AVIMConversation
  */
 
 
-class UserTeam(val id:String, val name:String,val member:List<String>, val avatar:String, val detail:String)
+class UserTeam(val objectId:String,val conversationId:String, val createdBy:String, val name:String, val member:List<String>, val avatar:String, val detail:String)

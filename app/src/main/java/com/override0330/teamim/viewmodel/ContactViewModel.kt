@@ -43,7 +43,9 @@ class ContactViewModel : BaseViewModel(){
             Log.d("拿到团队id列表","${it.size}")
             EventBus.getDefault().postSticky(OnBackgroundEvent{
                 list.postValue(it.map {
-                    UserTeam(it.getString("conversationId"),
+                    UserTeam(it.objectId,
+                        it.getString("conversationId"),
+                        it.getString("createdBy"),
                         it.getString("name"),
                         it.getList("member") as List<String>,
                         it.getString("avatar"),

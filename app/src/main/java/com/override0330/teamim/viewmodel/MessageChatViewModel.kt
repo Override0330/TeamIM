@@ -37,7 +37,7 @@
 //    private var conversation:AVIMConversation? = null
 //
 //    //创建对话
-//    fun create():LiveData<GetResultState>{
+//    fun creator():LiveData<GetResultState>{
 //        val state = MutableLiveData<GetResultState>()
 //        state.value = GetResultState.WAITING
 //        NowUser.getInstant().nowClient.createConversation(arrayListOf(userId),NowUser.getInstant().nowAVuser.username+userId,

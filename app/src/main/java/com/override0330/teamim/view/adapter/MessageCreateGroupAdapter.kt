@@ -20,7 +20,7 @@ import com.override0330.teamim.model.db.ContactDB
  */
 
 
-class MessageCreateGroupAdapter:RecyclerView.Adapter<MessageCreateGroupAdapter.ViewHolder>(),View.OnClickListener {
+class MessageCreateGroupAdapter(val selected: ArrayList<String>):RecyclerView.Adapter<MessageCreateGroupAdapter.ViewHolder>(),View.OnClickListener {
     var showList = ArrayList<AVUser>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,6 +36,10 @@ class MessageCreateGroupAdapter:RecyclerView.Adapter<MessageCreateGroupAdapter.V
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contactDB = showList[position]
+        if (selected.contains(contactDB.objectId)){
+            //已经被选择的人
+            holder.checkBox.isChecked = true
+        }
         Glide.with(BaseApp.context()).load(contactDB.getString("avatar")).into(holder.avatar)
         holder.name.text = contactDB.username
         holder.itemView.setOnClickListener(this)

@@ -1,12 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motion_layout_task"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+                app:layoutDescription="@xml/floating_action_button_scene">
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart_refresh_task_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_task_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"/>
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_action_button_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@mipmap/ic_add_white"
+            android:layout_marginStart="395dp"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_action_button_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorGreen"
+            android:src="@mipmap/ic_over_check"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_action_button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorOrange"
+            android:src="@mipmap/ic_back_arrow"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_action_button_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorOrange"
+            android:src="@mipmap/ic_more"/>
+
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="15dp"
+            android:alpha="0"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="15dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_task_main_cancel_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="1项任务已完成"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="20dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_task_main_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="点击撤销"
+                    android:textSize="15sp"
+                    android:textColor="@color/blue"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.motion.widget.MotionLayout>

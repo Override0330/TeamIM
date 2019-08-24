@@ -33,7 +33,7 @@ class TeamInformationEditActivity :BaseViewModelActivity<TeamInformationEditView
     override val viewModelClass: Class<TeamInformationEditViewModel>
         get() = TeamInformationEditViewModel::class.java
 
-    var nowAvatarUrl = ""
+    private var nowAvatarUrl = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +47,36 @@ class TeamInformationEditActivity :BaseViewModelActivity<TeamInformationEditView
     }
 
     private fun initView(conversationId:String){
-        viewModel.getTeam(conversationId).observe(this, Observer {
+        viewModel.getTeam(conversationId).observe(this, Observer { userTeam ->
             //拿到Team信息
-            Glide.with(this).load(it.avatar).into(iv_edit_team_avatar)
-            et_edit_team_name.setText(it.name)
-            et_edit_team_detail.setText(it.detail)
+            nowAvatarUrl = userTeam.avatar
+            Glide.with(this).load(userTeam.avatar).into(iv_edit_team_avatar)
+            et_edit_team_name.setText(userTeam.name)
+            et_edit_team_detail.setText(userTeam.detail)
+
+            tv_save_team_information.setOnClickListener {
+                Log.d("点击按钮","保存")
+                val user = AVUser.createWithoutData("UserTeam",userTeam.objectId)
+                user.put("name",et_edit_team_name.text.toString())
+                user.put("detail",et_edit_team_detail.text.toString())
+                user.put("avatar",nowAvatarUrl)
+                user.saveInBackground().safeSubscribe(object : io.reactivex.Observer<AVObject> {
+                    override fun onComplete() {}
+
+                    override fun onSubscribe(d: Disposable) {}
+
+                    override fun onNext(t: AVObject) {
+                        Log.d("更新User信息","更新成功")
+                        Toast.makeText(this@TeamInformationEditActivity,"更新团队信息成功", Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        e.printStackTrace()
+                        Log.d("更新User信息","更新失败")
+                    }
+                })
+            }
         })
         iv_edit_team_avatar.setOnClickListener {
             PictureSelector.create(this)
@@ -62,30 +87,6 @@ class TeamInformationEditActivity :BaseViewModelActivity<TeamInformationEditView
                 .previewImage(true)
                 .enableCrop(true)
                 .forResult(PictureConfig.CHOOSE_REQUEST)
-        }
-
-        tv_save_information.setOnClickListener {
-            Log.d("点击按钮","保存")
-            val user = AVUser.createWithoutData("UserTeam", AVUser.currentUser().objectId)
-            user.put("name",et_edit_team_name.text.toString())
-            user.put("detail",et_edit_team_detail.text.toString())
-            user.put("avatar",nowAvatarUrl)
-            user.saveInBackground().safeSubscribe(object : io.reactivex.Observer<AVObject> {
-                override fun onComplete() {}
-
-                override fun onSubscribe(d: Disposable) {}
-
-                override fun onNext(t: AVObject) {
-                    Log.d("更新User信息","更新成功")
-                    Toast.makeText(this@TeamInformationEditActivity,"更新团队信息成功", Toast.LENGTH_LONG).show()
-                    finish()
-                }
-
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                    Log.d("更新User信息","更新失败")
-                }
-            })
         }
     }
 

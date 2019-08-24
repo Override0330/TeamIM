@@ -1,5 +1,6 @@
 package com.override0330.teamim.model.bean
 
+import android.util.Log
 import cn.leancloud.AVUser
 import cn.leancloud.im.v2.AVIMClient
 import cn.leancloud.im.v2.AVIMConversation
@@ -17,6 +18,7 @@ class NowUser private constructor(){
         @Synchronized
         fun getInstant():NowUser{
             if (nowUser==null){
+                Log.d("当前用户","初始化")
                 nowUser = NowUser()
             }
             return nowUser!!
@@ -25,6 +27,4 @@ class NowUser private constructor(){
 
     lateinit var nowAVuser:AVUser
     lateinit var nowClient:AVIMClient
-
-    //垃圾sdk，我选择本地消息盒子
 }

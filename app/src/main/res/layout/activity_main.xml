@@ -57,12 +57,19 @@
             android:layout_height="10dp"
             android:indeterminate="true"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
-    <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_contain_main"
+
+    <!--<androidx.fragment.app.FragmentContainerView-->
+            <!--android:conversationId="@+conversationId/fragment_contain_main"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--app:defaultNavHost="true" />-->
+    <com.override0330.teamim.view.UnscrollViewPager
+            android:id="@+id/vp_main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:defaultNavHost="true" />
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"

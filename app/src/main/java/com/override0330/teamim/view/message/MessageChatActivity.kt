@@ -1,7 +1,6 @@
 package com.override0330.teamim.view.message
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -29,6 +28,8 @@ import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.base.BaseViewModelActivity
 import com.override0330.teamim.model.bean.NowUser
+import com.override0330.teamim.view.contact.PersonInformationActivity
+import com.override0330.teamim.view.contact.TeamInformationActivity
 import org.greenrobot.eventbus.EventBus
 
 
@@ -43,7 +44,7 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
     override val viewModelClass: Class<ConversationViewModel>
         get() = ConversationViewModel::class.java
 
-    private val adapter = MessageChatAdapter()
+    private val adapter = MessageChatAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,19 +73,23 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
                     arrayList.remove(NowUser.getInstant().nowAVuser.objectId)
                     UserRepository.getInstant().getObjectByIdFromNet("_User",arrayList[0]).observe(this,Observer {
                         tv_toolbar_title.text = it.getString("username")
-                        Glide.with(BaseApp.context()).load(it.getString("avatar")).apply(
-                            RequestOptions.bitmapTransform(
-                                CircleCrop()
-                            )).into(iv_message_avatar)
+                        //设置点击事件，跳转个人信息
+                        iv_chat_more.setOnClickListener {
+                            val intent = Intent(this,PersonInformationActivity::class.java)
+                            intent.putExtra("userId",it.id)
+                            startActivity(intent)
+                        }
                     })
                 }else{
                     //如果是群聊
                     ConversationRepository.getInstant().getTeamFromNet(conversationId).observe(this, Observer {
                         tv_toolbar_title.text = it.name
-                        Glide.with(BaseApp.context()).load(it.avatar).apply(
-                            RequestOptions.bitmapTransform(
-                                CircleCrop()
-                            )).into(iv_message_avatar)
+                        //设置点击事件，跳转团队信息
+                        iv_chat_more.setOnClickListener {
+                            val intent = Intent(this, TeamInformationActivity::class.java)
+                            intent.putExtra("conversationId",conversationId)
+                            startActivity(intent)
+                        }
                     })
                 }
                 viewModel.getMessageList().observe(this, Observer {
@@ -148,6 +153,7 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
                 viewModel.conversation
             }
         }
+
     }
 
     @Subscribe

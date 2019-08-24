@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.leancloud.AVUser
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseViewModelActivity
 import com.override0330.teamim.model.bean.NowUser
@@ -71,7 +69,7 @@ class ContactHomeActivity : BaseViewModelActivity<ContactViewModel>(){
                     //跳转到团队详情
                     if (teamAdapter.showList!=null){
                         val intent = Intent(this@ContactHomeActivity,TeamInformationActivity::class.java)
-                        intent.putExtra("conversationId", teamAdapter.showList!![position].id)
+                        intent.putExtra("conversationId", teamAdapter.showList!![position].conversationId)
                         startActivity(intent)
                     }
                 }

@@ -36,14 +36,14 @@ class PersonViewModel : BaseViewModel(){
 
     fun createConversation(list:List<String>,name:String):LiveData<String>{
         return conversationRepository.createConversation(list,name)
-//        val id = MutableLiveData<String>()
+//        val conversationId = MutableLiveData<String>()
 //        NowUser.getInstant().nowClient.createConversation(list,name,null,false,true,object :
 //            AVIMConversationCreatedCallback() {
 //            override fun done(conversation: AVIMConversation?, e: AVIMException?) {
 //                if (e==null&&conversation!=null){
 //                    //将这个消息存入消息列表,目前来说通讯录是新建对话的唯一来源
 //                    NowUser.getInstant().conversationHashMap[conversation.conversationId] = conversation
-//                    id.postValue(conversation.conversationId)
+//                    conversationId.postValue(conversation.conversationId)
 //                    //将用户Id和对话Id上传至云端
 //                    EventBus.getDefault().postSticky(OnBackgroundEvent{
 //                        val query = AVQuery<AVObject>("UserTeam")
@@ -71,7 +71,7 @@ class PersonViewModel : BaseViewModel(){
 //                }
 //            }
 //        })
-//        return id
+//        return conversationId
     }
 
     fun getUser(id:String):LiveData<AVObject>{

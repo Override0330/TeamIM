@@ -1,5 +1,6 @@
 package com.override0330.teamim.Repository
 
+import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -9,6 +10,7 @@ import cn.leancloud.AVObject
 import cn.leancloud.AVQuery
 import cn.leancloud.AVUser
 import com.override0330.teamim.OnBackgroundEvent
+import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.db.AppDatabase
 import com.override0330.teamim.model.db.ContactDB
 import io.reactivex.disposables.Disposable
@@ -76,14 +78,26 @@ class UserRepository private constructor(){
     //拿取联系人列表
     fun getContactListLiveData(lifecycleOwner: LifecycleOwner): LiveData<List<AVUser>> {
         val data = MutableLiveData<List<AVUser>>()
-//        database.appDao().getAllContactList().observe(lifecycleOwner, Observer {
-//            data.postValue(it)
-//        })
         getContactIdListFromNet().observe(lifecycleOwner, Observer {
             EventBus.getDefault().postSticky(OnBackgroundEvent{
                 val list = it.map { getUserFromNetNow(it) }
                 data.postValue(list)
             })
+        })
+        return data
+    }
+
+    //拿到包含了自己的联系人列表
+    fun getContactListIncludeSelfLiveData(lifecycleOwner: LifecycleOwner): LiveData<List<AVUser>> {
+        val data = MutableLiveData<List<AVUser>>()
+        getContactIdListFromNet().observe(lifecycleOwner, Observer {
+            AsyncTask.execute {
+                val arrayList = ArrayList<String>()
+                arrayList.add(NowUser.getInstant().nowAVuser.objectId)
+                arrayList.addAll(it)
+                val list = arrayList.map { getUserFromNetNow(it) }
+                data.postValue(list)
+            }
         })
         return data
     }
@@ -134,6 +148,7 @@ class UserRepository private constructor(){
         val data = MutableLiveData<AVObject>()
         val query = AVQuery<AVObject>(className)
         query.whereEqualTo("objectId",objectId)
+        query.cachePolicy = AVQuery.CachePolicy.CACHE_ELSE_NETWORK
         query.firstInBackground.subscribe(object : io.reactivex.Observer<AVObject> {
             override fun onComplete() {}
 

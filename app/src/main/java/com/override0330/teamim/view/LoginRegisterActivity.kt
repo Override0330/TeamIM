@@ -1,8 +1,11 @@
 package com.override0330.teamim.view
 
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -39,7 +42,7 @@ class LoginRegisterActivity : BaseViewModelActivity<LoginRegisterViewModel>() {
         timer.schedule(timerTask {
             fragment_login_motion_layout_main.transitionToEnd()
         }, 750)
-        val registerButton = findViewById<MaterialButton>(R.id.btn_login_register)
+        val registerButton = findViewById<Button>(R.id.btn_login_register)
         val accountEditText = findViewById<EditText>(R.id.et_login_account)
         val passwordEditText = findViewById<EditText>(R.id.et_login_password)
         val passwordAgainText = findViewById<EditText>(R.id.et_login_password_again)
@@ -61,6 +64,8 @@ class LoginRegisterActivity : BaseViewModelActivity<LoginRegisterViewModel>() {
                                 LoginRegisterViewModel.LoginRegisterState.SUCCESS -> {
                                     //成功
                                     val intent = Intent(this@LoginRegisterActivity,MainActivity::class.java)
+                                    intent.flags = FLAG_ACTIVITY_CLEAR_TASK
+                                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                                     startActivity(intent)
                                 }
                                 LoginRegisterViewModel.LoginRegisterState.FAIL -> {
@@ -96,6 +101,8 @@ class LoginRegisterActivity : BaseViewModelActivity<LoginRegisterViewModel>() {
                                 //成功
                                 println("成功")
                                 val intent = Intent(this@LoginRegisterActivity,MainActivity::class.java)
+                                intent.flags = FLAG_ACTIVITY_CLEAR_TASK
+                                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                                 startActivity(intent)
                             }
                             LoginRegisterViewModel.LoginRegisterState.FAIL -> {

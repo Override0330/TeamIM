@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         app:layoutDescription="@xml/fragment_login_motion_scene">
-    <com.google.android.material.button.MaterialButton
+    <androidx.appcompat.widget.AppCompatButton
             android:text="@string/login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintBottom_toTopOf="@+id/btn_login_register"/>
 
-    <com.google.android.material.textfield.TextInputEditText
+    <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_login_account"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintBottom_toTopOf="@+id/et_login_password"/>
 
-    <com.google.android.material.button.MaterialButton
+    <androidx.appcompat.widget.AppCompatButton
             android:text="@string/register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

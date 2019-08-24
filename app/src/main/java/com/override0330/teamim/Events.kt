@@ -28,3 +28,5 @@ class OpenChatEvent(val bundle: Bundle, val navigationId:Int)
 class ShowOrHideProgressBarEvent(val isShow:Boolean)
 
 class RefreshMessageBoxEvent(val conversationId:String)
+
+class RefreshTaskListEvent()

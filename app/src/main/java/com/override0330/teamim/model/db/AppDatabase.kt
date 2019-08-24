@@ -26,8 +26,10 @@ abstract class AppDatabase:RoomDatabase(){
 
         @Synchronized
         fun getInstant():AppDatabase{
+            val databaseName = NowUser.getInstant().nowAVuser.objectId
+            Log.d("获取数据库对象","此时用户id，${databaseName}")
             if (instant==null) {
-                instant = Room.databaseBuilder(BaseApp.context(), AppDatabase::class.java, NowUser.getInstant().nowAVuser.objectId)
+                instant = Room.databaseBuilder(BaseApp.context(), AppDatabase::class.java,databaseName)
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)

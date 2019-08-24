@@ -5,10 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
+import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.model.db.MessageDB
 
 
@@ -19,7 +24,7 @@ import com.override0330.teamim.model.db.MessageDB
  */
 
 
-class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnLongClickListener{
+class MessageChatAdapter(val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnLongClickListener{
     var showList = ArrayList<MessageDB>()
     var onItemLongClickListener: OnItemLongClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,6 +46,14 @@ class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val messageDB = showList[position]
+        //加载头像
+        UserRepository.getInstant().getObjectByIdFromNet("_User",messageDB.from).observe(lifecycleOwner, Observer {
+            Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
+                RequestOptions.bitmapTransform(
+                    CircleCrop()
+                )).into(holder.avatar)
+        })
+        //这里应该加上一个图片消息和文字消息的处理
         if (messageDB.sendContent!=""){
             val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
             holder.content.text = realText
@@ -67,6 +80,7 @@ class MessageChatAdapter:RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val content = view.findViewById<TextView>(R.id.tv_item_message)
         val image = view.findViewById<ImageView>(R.id.iv_item_image)
+        val avatar = view.findViewById<ImageView>(R.id.iv_item_avatar)
     }
 
     interface OnItemLongClickListener{

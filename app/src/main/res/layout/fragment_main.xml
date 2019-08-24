@@ -64,6 +64,11 @@
             android:layout_weight="1"
             app:defaultNavHost="true" />
 
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"
             android:layout_width="match_parent"

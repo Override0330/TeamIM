@@ -11,7 +11,7 @@ import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseViewModelActivity
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.view.adapter.MessageCreateGroupAdapter
-import com.override0330.teamim.viewmodel.MessageCreateGroupViewModel
+import com.override0330.teamim.viewmodel.MessageCreateTeamViewModel
 import kotlinx.android.synthetic.main.fragment_create_group.*
 
 /**
@@ -20,11 +20,11 @@ import kotlinx.android.synthetic.main.fragment_create_group.*
  * @description
  */
 
-class MessageCreateGroupActivity : BaseViewModelActivity<MessageCreateGroupViewModel>(){
-    override val viewModelClass: Class<MessageCreateGroupViewModel>
-        get() = MessageCreateGroupViewModel::class.java
+class MessageCreateTeamActivity : BaseViewModelActivity<MessageCreateTeamViewModel>(){
+    override val viewModelClass: Class<MessageCreateTeamViewModel>
+        get() = MessageCreateTeamViewModel::class.java
     val selectList = ArrayList<String>()
-    val adapter = MessageCreateGroupAdapter()
+    val adapter = MessageCreateGroupAdapter(ArrayList<String>())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,19 +1,16 @@
 package com.override0330.teamim
 
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
+import androidx.viewpager.widget.ViewPager
 import com.override0330.teamim.base.BaseActivity
+import com.override0330.teamim.view.adapter.HomeViewPagerAdapter
 import com.override0330.teamim.view.contact.ContactHomeActivity
-import com.override0330.teamim.view.message.MessageCreateGroupActivity
+import com.override0330.teamim.view.home.MessageHomeFragment
+import com.override0330.teamim.view.home.SquareFragment
+import com.override0330.teamim.view.home.TaskFragment
+import com.override0330.teamim.view.message.MessageCreateTeamActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.bottom_navigation_main
 import kotlinx.android.synthetic.main.fragment_main.iv_toolbar_left
 import kotlinx.android.synthetic.main.fragment_main.iv_toolbar_right
@@ -25,28 +22,18 @@ import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : BaseActivity() {
 
-    private var currentNavController: LiveData<NavController>? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
-        setOutBottomNav()
-    }
-
-    private fun setOutBottomNav(){
-        val navGraphIds = listOf(R.navigation.navigation_message,R.navigation.navigation_square,R.navigation.navigation_task)
-        val controller = bottom_navigation_main.setupWithNavController(
-            navGraphIds,
-            supportFragmentManager,
-            R.id.fragment_contain_main
-        )
-
-        controller.observe(this, Observer {
-            //切换视图监听
-            Log.d("id总览",navGraphIds.toString())
-            Log.d("切换id","${it.graph.id}")
-            when(it.graph.id){
+        val adapter = HomeViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(MessageHomeFragment())
+        adapter.addFragment(TaskFragment())
+        adapter.addFragment(SquareFragment())
+        vp_main.adapter = adapter
+        vp_main.offscreenPageLimit=3
+        bottom_navigation_main.setOnNavigationItemSelectedListener {
+            when(it.itemId){
                 R.id.navigation_message->{
                     tv_toolbar_title.text = "消息"
                     iv_toolbar_left.setImageResource(R.mipmap.ic_contact)
@@ -54,22 +41,39 @@ class MainActivity : BaseActivity() {
                         val intent = Intent(this,ContactHomeActivity::class.java)
                         startActivity(intent)
                     }
+                    iv_toolbar_right.setImageResource(R.mipmap.ic_add)
                     iv_toolbar_right.setOnClickListener {
-                        val intent = Intent(this, MessageCreateGroupActivity::class.java)
+                        val intent = Intent(this, MessageCreateTeamActivity::class.java)
                         startActivity(intent)
                     }
-                }
-                R.id.navigation_square ->{
-                    tv_toolbar_title.text = "广场"
+                    vp_main.setCurrentItem(0,false)
                 }
                 R.id.navigation_task ->{
                     tv_toolbar_title.text = "任务"
+                    vp_main.setCurrentItem(1,false)
+                    iv_toolbar_right.setImageResource(0)
+                }
+                R.id.navigation_square ->{
+                    tv_toolbar_title.text = "广场"
+                    vp_main.setCurrentItem(2,false)
+                    iv_toolbar_right.setImageResource(0)
                 }
             }
-        })
-        currentNavController = controller
-    }
+            return@setOnNavigationItemSelectedListener true
+        }
 
+        vp_main.addOnPageChangeListener(object :ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                bottom_navigation_main.menu.getItem(position).isChecked = true
+            }
+
+            override fun onPageSelected(position: Int) {}
+        })
+        bottom_navigation_main.selectedItemId = R.id.navigation_message
+
+    }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun ShowProgressBar(showOrHideProgressBarEvent: ShowOrHideProgressBarEvent){
         if (showOrHideProgressBarEvent.isShow){
