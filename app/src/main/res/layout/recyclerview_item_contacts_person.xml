@@ -15,8 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@color/colorWhite"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_marginTop="1dp">
 
         <androidx.appcompat.widget.AppCompatImageView
