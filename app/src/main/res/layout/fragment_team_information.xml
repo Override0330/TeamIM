@@ -15,7 +15,15 @@
         <ImageView
                 android:id="@+id/iv_team_information_bg"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
                 android:scaleType="centerCrop"
                 android:src="#30000000"
                 app:layout_constraintTop_toTopOf="parent"
@@ -156,58 +164,6 @@
                         android:layout_height="70dp"
                         android:textSize="20sp"
                         android:gravity="center_vertical"/>
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_item_ing_task"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:textSize="17sp"
-                        android:text="@string/ingTask"
-                        android:gravity="center_vertical"/>
-
-                <LinearLayout
-                        android:id="@+id/ll_item_ing_task"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/ic_task"/>
-                </LinearLayout>
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_item_over_task"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:textSize="17sp"
-                        android:text="@string/overTask"
-                        android:gravity="center_vertical"/>
-
-                <LinearLayout
-                        android:id="@+id/ll_item_over_task"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/ic_task"/>
-                </LinearLayout>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

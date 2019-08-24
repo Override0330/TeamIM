@@ -18,8 +18,7 @@ class MessageDB(@PrimaryKey val messageId:String,
                 val from:String,
                 val conversationId:String,
                 val timestamp:Long,
-                val sendContent:String,
-                val sendImage:String)
+                val sendContent:String)
 
 //存放应该在消息界面显示的对话
 @Entity(tableName = "conversation")

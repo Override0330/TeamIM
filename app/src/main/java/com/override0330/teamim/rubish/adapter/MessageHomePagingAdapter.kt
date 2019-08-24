@@ -14,7 +14,7 @@
 //import androidx.recyclerview.widget.DiffUtil
 //import androidx.recyclerview.widget.RecyclerView
 //import com.override0330.teamim.BR
-//import com.override0330.teamim.OnBackgroundEvent
+//import com.override0330.teamim.model.OnBackgroundEvent
 //import com.override0330.teamim.R
 //import com.override0330.teamim.databinding.*
 //import com.override0330.teamim.model.bean.MessageItem

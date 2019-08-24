@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import cn.leancloud.AVObject
-import cn.leancloud.AVUser
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVObject
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.SaveCallback
 import com.bumptech.glide.Glide
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -29,16 +31,17 @@ class PersonInformagtionEditActivity : BaseViewModelActivity<PersonInformationEd
     override val viewModelClass: Class<PersonInformationEditViewModel>
         get() = PersonInformationEditViewModel::class.java
 
-    private var nowUserAvatarUrl: String = AVUser.currentUser().getString("avatar")
+    private var nowUserAvatarUrl: String = AVUser.getCurrentUser().getString("avatar")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_contact_information_edit)
         initView()
     }
 
     fun initView(){
-        val user = AVUser.currentUser()
+        val user = AVUser.getCurrentUser()
         et_edit_username.setText(user.username)
         et_edit_geqian.setText(user.getString("geQian"))
         Glide.with(this).load(nowUserAvatarUrl).into(iv_edit_avatar)
@@ -56,24 +59,19 @@ class PersonInformagtionEditActivity : BaseViewModelActivity<PersonInformationEd
 
         tv_save_information.setOnClickListener {
             Log.d("点击按钮","保存")
-            val user = AVUser.createWithoutData("_User",AVUser.currentUser().objectId)
+            val user = AVUser.createWithoutData("_User",AVUser.getCurrentUser().objectId)
             user.put("username",et_edit_username.text.toString())
             user.put("geQian",et_edit_geqian.text.toString())
             user.put("avatar",nowUserAvatarUrl)
-            user.saveInBackground().safeSubscribe(object :Observer<AVObject>{
-                override fun onComplete() {}
-
-                override fun onSubscribe(d: Disposable) {}
-
-                override fun onNext(t: AVObject) {
-                    Log.d("更新User信息","更细成功")
-                    Toast.makeText(this@PersonInformagtionEditActivity,"更新个人信息成功",Toast.LENGTH_LONG).show()
-                    finish()
-                }
-
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                    Log.d("更新User信息","更细失败")
+            user.saveInBackground(object :SaveCallback(){
+                override fun done(e: AVException?) {
+                    if (e==null){
+                        Log.d("更新User信息","更新成功")
+                        Toast.makeText(this@PersonInformagtionEditActivity,"更新个人信息成功",Toast.LENGTH_LONG).show()
+                        finish()
+                    }else{
+                        Toast.makeText(this@PersonInformagtionEditActivity,"更新个人信息失败",Toast.LENGTH_LONG).show()
+                    }
                 }
             })
         }

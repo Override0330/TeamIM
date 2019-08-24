@@ -10,10 +10,9 @@ import android.widget.CheckBox
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.override0330.teamim.R
-import com.override0330.teamim.RefreshTaskListEvent
+import com.override0330.teamim.model.RefreshTaskListEvent
 import com.override0330.teamim.base.BaseViewModelFragment
 import com.override0330.teamim.model.bean.Task
-import com.override0330.teamim.view.adapter.TaskCompletedAdapter
 import com.override0330.teamim.view.adapter.TaskHomeAdapter
 import com.override0330.teamim.view.task.TaskCompletedActivity
 import com.override0330.teamim.view.task.TaskCreateActivity

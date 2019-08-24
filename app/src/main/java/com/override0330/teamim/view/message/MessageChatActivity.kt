@@ -7,7 +7,6 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.leancloud.im.v2.messages.AVIMTextMessage
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -20,13 +19,14 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import kotlin.collections.ArrayList
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
+import com.avos.avoscloud.im.v2.messages.AVIMTextMessage
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
-import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.base.BaseViewModelActivity
+import com.override0330.teamim.model.AddMessageItemEvent
+import com.override0330.teamim.model.ReceiveMessageEvent
+import com.override0330.teamim.model.RefreshMessageBoxEvent
+import com.override0330.teamim.model.bean.GetResultState
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.view.contact.PersonInformationActivity
 import com.override0330.teamim.view.contact.TeamInformationActivity
@@ -48,6 +48,7 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_message_chat)
         val conversationId = intent.getStringExtra("conversationId")
         if (conversationId!=null){
@@ -111,27 +112,32 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
         }
 
         rv_message_list.adapter = adapter
-        rv_message_list.layoutManager = LinearLayoutManager(this)
+        val layoutManager= LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+        rv_message_list.layoutManager =layoutManager
         rv_message_list.itemAnimator = DefaultItemAnimator()
 
         iv_message_send.setOnClickListener {
             //发送消息的逻辑
-            progress_bar_chat.show()
-            val msg = AVIMTextMessage()
-            msg.text = et_message_content.text.toString()
-            viewModel.sendMessage(msg).observe(this, Observer {
-                Log.d("debug","$it")
-                progress_bar_chat.hide()
-                if (it==GetResultState.SUCCESS){
-                    //创建对话成功
-                    Log.d("LeanCloud","消息发送成功")
-                    //更新聊天记录
-                    et_message_content.text?.clear()
-                }else if (it==GetResultState.FAIL){
-                    //失败
-                    Toast.makeText(this,"得益于LeanCloud的土豆服务器，你可能已经断开连接",Toast.LENGTH_LONG).show()
-                }
-            })
+            val content = et_message_content.text.toString()
+            if (!content.isBlank()){
+                progress_bar_chat.show()
+                val msg = AVIMTextMessage()
+                msg.text = et_message_content.text.toString()
+                viewModel.sendMessage(msg).observe(this, Observer {
+                    Log.d("debug","$it")
+                    progress_bar_chat.hide()
+                    if (it== GetResultState.SUCCESS){
+                        //创建对话成功
+                        Log.d("LeanCloud","消息发送成功")
+                        //更新聊天记录
+                        et_message_content.text?.clear()
+                    }else if (it== GetResultState.FAIL){
+                        //失败
+                        Toast.makeText(this,"得益于LeanCloud的土豆服务器，你可能已经断开连接",Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
         }
 
         iv_message_image.setOnClickListener {
@@ -144,7 +150,6 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
                 .previewImage(true)
                 .enableCrop(true)
                 .forResult(PictureConfig.CHOOSE_REQUEST)
-
         }
 
         //消息撤回，臣妾做不到啊
@@ -153,13 +158,15 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
                 viewModel.conversation
             }
         }
-
     }
 
     @Subscribe
     fun receiveMessage(receiveMessageEvent: ReceiveMessageEvent){
         val message = receiveMessageEvent.message
-        addMessage(AddMessageItemEvent(message))
+        if (viewModel.conversation!=null){
+            if (message.conversationId==viewModel.conversation!!.conversationId)
+                addMessage(AddMessageItemEvent(message))
+        }
     }
 
     //显示消息
@@ -187,7 +194,7 @@ class MessageChatActivity :BaseViewModelActivity<ConversationViewModel>(){
                     val uri = selectList[0].path
                     Log.d("debug",uri)
                     progress_bar_chat.show()
-                    viewModel.sendImageMessageTest(uri).observe(this, Observer {
+                    viewModel.sendImageMessage(uri).observe(this, Observer {
                         when(it){
                             ConversationViewModel.SendState.SUCCESS ->{
                                 progress_bar_chat.hide()

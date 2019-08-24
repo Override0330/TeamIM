@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.leancloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMConversation
 import com.override0330.teamim.*
 import com.override0330.teamim.base.BaseViewModelFragment
+import com.override0330.teamim.model.RefreshMessageBoxEvent
+import com.override0330.teamim.model.ShowOrHideProgressBarEvent
 import com.override0330.teamim.view.adapter.MessageHomeAdapter
 import com.override0330.teamim.view.message.MessageChatActivity
 import com.override0330.teamim.viewmodel.MessageHomeViewModel

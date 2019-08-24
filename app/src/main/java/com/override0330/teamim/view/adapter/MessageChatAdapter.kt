@@ -1,5 +1,6 @@
 package com.override0330.teamim.view.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,61 +25,133 @@ import com.override0330.teamim.model.db.MessageDB
  */
 
 
-class MessageChatAdapter(val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<MessageChatAdapter.ViewHolder>(), View.OnLongClickListener{
+class MessageChatAdapter(val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<RecyclerView.ViewHolder>(), View.OnLongClickListener {
     var showList = ArrayList<MessageDB>()
     var onItemLongClickListener: OnItemLongClickListener? = null
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view:View
-        if (viewType==1){
-            //对方发的消息
-            view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_other,parent,false)
-        }else{
-            //自己的消息
-            view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_me,parent,false)
-            view.setOnLongClickListener(this)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            0 -> OtherTextViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_other, parent, false))
+            1 -> OtherImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_other_image, parent, false))
+            2 -> MyTextViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_me, parent, false))
+            else -> MyImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_message_me_image, parent, false))
         }
-        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return showList.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val messageDB = showList[position]
-        //加载头像
-        UserRepository.getInstant().getObjectByIdFromNet("_User",messageDB.from).observe(lifecycleOwner, Observer {
-            Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
-                RequestOptions.bitmapTransform(
-                    CircleCrop()
-                )).into(holder.avatar)
-        })
-        //这里应该加上一个图片消息和文字消息的处理
-        if (messageDB.sendContent!=""){
-            val realText = JSONObject.parseObject(messageDB.sendContent).getString("_lctext")
-            holder.content.text = realText
-        }
-        if (messageDB.sendImage!=""){
-            Glide.with(holder.itemView.context).load(messageDB.sendImage).into(holder.image)
-        }
+        val jsonObject = JSONObject.parseObject(messageDB.sendContent)
         holder.itemView.tag = position
+        when (holder) {
+            is OtherTextViewHolder -> {
+                //加载头像
+                UserRepository.getInstant().getObjectByIdFromNet("_User", messageDB.from).observe(lifecycleOwner, Observer {
+                    Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
+                        RequestOptions.bitmapTransform(
+                            CircleCrop()
+                        )
+                    ).into(holder.avatar)
+                })
+                //文字消息
+                val realContent = jsonObject.getString("_lctext")
+                holder.content.text = realContent
+
+            }
+            is OtherImageViewHolder -> {
+                //加载头像
+                UserRepository.getInstant().getObjectByIdFromNet("_User", messageDB.from).observe(lifecycleOwner, Observer {
+                    Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
+                        RequestOptions.bitmapTransform(
+                            CircleCrop()
+                        )
+                    ).into(holder.avatar)
+                })
+                //图片消息
+                val imageUrl = jsonObject.getJSONObject("_lcfile").getString("url")
+                holder.image.setTag(R.id.imageId, imageUrl)
+                if (holder.image.getTag(R.id.imageId) != null && imageUrl == holder.image.getTag(R.id.imageId)) {
+                    Glide.with(holder.itemView.context).load(imageUrl).into(holder.image)
+                }
+
+            }
+            is MyTextViewHolder -> {
+                //加载头像
+                UserRepository.getInstant().getObjectByIdFromNet("_User", messageDB.from).observe(lifecycleOwner, Observer {
+                    Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
+                        RequestOptions.bitmapTransform(
+                            CircleCrop()
+                        )
+                    ).into(holder.avatar)
+                })
+                //文字消息
+                val realContent = jsonObject.getString("_lctext")
+                holder.content.text = realContent
+            }
+            is MyImageViewHolder-> {
+                //加载头像
+                UserRepository.getInstant().getObjectByIdFromNet("_User", messageDB.from).observe(lifecycleOwner, Observer {
+                    Glide.with(holder.itemView.context).load(it.getString("avatar")).apply(
+                        RequestOptions.bitmapTransform(
+                            CircleCrop()
+                        )
+                    ).into(holder.avatar)
+                })
+                //图片消息
+                val imageUrl = jsonObject.getJSONObject("_lcfile").getString("url")
+                holder.image.setTag(R.id.imageId, imageUrl)
+                if (holder.image.getTag(R.id.imageId) != null && imageUrl == holder.image.getTag(R.id.imageId)) {
+                    Glide.with(holder.itemView.context).load(imageUrl).into(holder.image)
+                }
+
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
-        with(showList[position]){
-            return if (this.from != com.override0330.teamim.model.bean.NowUser.getInstant().nowAVuser.objectId){
-                //对方的消息
+        val message = showList[position]
+        val jsonObject = JSONObject.parseObject(message.sendContent)
+        if (message.from != com.override0330.teamim.model.bean.NowUser.getInstant().nowAVuser.objectId) {
+            //对方发送的消息
+            return if (jsonObject.getIntValue("_lctype") == -1) {
+                //文字消息
+                0
+
+            } else if (jsonObject.getIntValue("_lctype") == -2) {
+                //图片消息
                 1
             }else{
+                -1
+            }
+        } else {
+            //我方发送的消息
+            return if (jsonObject.getIntValue("_lctype") == -1) {
+                //文字消息
                 2
+            } else if (jsonObject.getIntValue("_lctype") == -2) {
+                //图片消息
+                3
+            }else{
+                -1
             }
         }
-
     }
 
-
-    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class OtherTextViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val content = view.findViewById<TextView>(R.id.tv_item_message)
+        val avatar = view.findViewById<ImageView>(R.id.iv_item_avatar)
+    }
+    class OtherImageViewHolder(view:View): RecyclerView.ViewHolder(view){
+        val image = view.findViewById<ImageView>(R.id.iv_item_image)
+        val avatar = view.findViewById<ImageView>(R.id.iv_item_avatar)
+    }
+    class MyTextViewHolder(view:View):RecyclerView.ViewHolder(view){
+        val content = view.findViewById<TextView>(R.id.tv_item_message)
+        val avatar = view.findViewById<ImageView>(R.id.iv_item_avatar)
+    }
+    class MyImageViewHolder(view:View):RecyclerView.ViewHolder(view){
         val image = view.findViewById<ImageView>(R.id.iv_item_image)
         val avatar = view.findViewById<ImageView>(R.id.iv_item_avatar)
     }

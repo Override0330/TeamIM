@@ -6,14 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import cn.leancloud.AVObject
-import cn.leancloud.AVUser
+import com.avos.avoscloud.AVUser
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseApp
-import com.override0330.teamim.model.db.ContactDB
 
 /**
  * @data 2019-08-20

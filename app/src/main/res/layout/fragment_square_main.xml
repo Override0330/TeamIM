@@ -1,12 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <androidx.appcompat.widget.AppCompatTextView
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+                name="informationUserItem"
+                type="com.override0330.teamim.model.bean.UserItem"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="广场还在施工🚧\n请稍后再来！"
-            android:textSize="50sp"/>
-</LinearLayout>
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/iv_information_bg"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@color/colorPrimary"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        <androidx.constraintlayout.widget.Guideline
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline11"
+                app:layout_constraintGuide_percent="0.04"/>
+
+        <androidx.constraintlayout.widget.Guideline
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline12"
+                app:layout_constraintGuide_percent="0.96"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_information_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_task"
+                android:adjustViewBounds="true"
+                app:layout_constraintTop_toBottomOf="@+id/iv_information_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_information_bg"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
+                />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_information_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="田晓煊"
+                android:transitionName="message_name"
+                android:textStyle="bold"
+                android:textSize="27sp"
+                app:layout_constraintTop_toTopOf="@+id/iv_information_avatar"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_information_bg"
+                app:layout_constraintVertical_bias="1.0"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_information_avatar"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintVertical_weight="1"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@id/guideline12"
+                app:layout_constraintStart_toStartOf="@id/guideline11"
+                app:layout_constraintTop_toBottomOf="@id/iv_information_avatar"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_item_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:textSize="16sp"
+                        tools:text="ID"
+                        android:gravity="center_vertical"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_item_id_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_item_ge_qian"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:textSize="16sp"
+                        android:text="@string/geQian"
+                        android:gravity="center_vertical"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_item_ge_qian_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

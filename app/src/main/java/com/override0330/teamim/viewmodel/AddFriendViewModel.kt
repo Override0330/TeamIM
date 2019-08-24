@@ -3,8 +3,10 @@ package com.override0330.teamim.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.leancloud.AVQuery
-import cn.leancloud.AVUser
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVQuery
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.FindCallback
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import io.reactivex.Observer
@@ -23,18 +25,12 @@ class AddFriendViewModel : BaseViewModel() {
         val result = MutableLiveData<List<AVUser>>()
         val query = AVQuery<AVUser>("_User")
         query.whereEqualTo("username", userName)
-        query.findInBackground().subscribe(object : Observer<List<AVUser>> {
-            override fun onComplete() {}
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: List<AVUser>) {
-                Log.d("debug", "查询到 ${t.size} 个用户")
-                result.postValue(t)
-            }
-
-            override fun onError(e: Throwable) {
-                e.printStackTrace()
-                Log.d("debug", "查询错误")
+        query.findInBackground(object :FindCallback<AVUser>(){
+            override fun done(avObjects: MutableList<AVUser>?, avException: AVException?) {
+                if (!avObjects.isNullOrEmpty()){
+                    Log.d("debug", "查询到 ${avObjects.size} 个用户")
+                    result.postValue(avObjects)
+                }
             }
         })
         return result

@@ -2,23 +2,17 @@ package com.override0330.teamim.view.contact
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.transition.*
-import cn.leancloud.AVUser
+import com.avos.avoscloud.AVUser
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
 import com.override0330.teamim.base.BaseViewModelActivity
-import com.override0330.teamim.base.BaseViewModelFragment
-import com.override0330.teamim.databinding.FragmentInformationBinding
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.view.message.MessageChatActivity
 import com.override0330.teamim.viewmodel.PersonViewModel
@@ -38,6 +32,7 @@ class PersonInformationActivity : BaseViewModelActivity<PersonViewModel>(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_information)
         val userId = intent.getStringExtra("userId")
         if (userId!=null){

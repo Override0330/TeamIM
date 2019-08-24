@@ -33,6 +33,7 @@ class TaskCompletedActivity: BaseViewModelActivity<TaskCompletedViewModel>(),Tas
     var checkBox:CheckBox?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_task_completed)
         rv_task_completed.layoutManager = LinearLayoutManager(this)
         initView()

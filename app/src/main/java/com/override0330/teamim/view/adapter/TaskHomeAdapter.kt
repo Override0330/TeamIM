@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseApp
+import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.bean.Task
 import java.text.SimpleDateFormat
 
@@ -52,6 +53,15 @@ class TaskHomeAdapter(val lifecycleOwner: LifecycleOwner): RecyclerView.Adapter<
             holder.ddl.text = format.format(task.ddl)+"截止"
             val ddlTimeMillis = task.ddl.time
             val nowTimeMillis = System.currentTimeMillis()
+
+            //判断是否可以更改状态，如果是自己创建的任务，但是自己已完成或者不在执行人内，则不显示checkbox
+            val userId = NowUser.getInstant().nowAVuser.objectId
+            val isOver = task.member.contains(userId)&&!task.unDoneMember.contains(userId)
+            val isNotMember = !task.member.contains(userId)
+            if ((task.createdBy==userId&&(isOver||isNotMember))){
+                holder.checkBox.visibility = View.GONE
+            }
+
             //计算逾期
             if (nowTimeMillis>ddlTimeMillis){
                 val hours = ((nowTimeMillis-ddlTimeMillis)/3600000).toInt()
@@ -89,10 +99,16 @@ class TaskHomeAdapter(val lifecycleOwner: LifecycleOwner): RecyclerView.Adapter<
                 })
             }
             //发起人
-            UserRepository.getInstant().getObjectByIdFromNet("_User",task.createdBy).observe(lifecycleOwner, Observer {
-                holder.creator.text = "由"+it.getString("username")+"发布于"+task.createdAt.split('T')[0]
-            })
-            holder.over.text = "${task.member.size-task.unDoneMember.size}人已完成"
+            if (task.createdBy == userId){
+                //用户是发起者
+                holder.creator.text = "由 我 发布于"+format.format(task.createdAt)
+            }else{
+                UserRepository.getInstant().getObjectByIdFromNet("_User",task.createdBy).observe(lifecycleOwner, Observer {
+                    holder.creator.text = "由"+it.getString("username")+"发布于"+format.format(task.createdAt)
+                })
+            }
+
+            holder.over.text = "${task.member.size-task.unDoneMember.size}/${task.member.size}已完成"
             //CheckBox点击事件
             holder.checkBox.tag = task
             holder.checkBox.setOnClickListener{

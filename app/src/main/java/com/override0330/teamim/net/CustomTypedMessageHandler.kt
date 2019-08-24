@@ -1,10 +1,9 @@
 package com.override0330.teamim.net
 
-import cn.leancloud.im.v2.AVIMClient
-import cn.leancloud.im.v2.AVIMConversation
-import cn.leancloud.im.v2.AVIMTypedMessageHandler
-import cn.leancloud.im.v2.messages.AVIMImageMessage
-import org.greenrobot.eventbus.EventBus
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMTypedMessageHandler
+import com.avos.avoscloud.im.v2.messages.AVIMImageMessage
 
 /**
  * @data 2019-08-22
@@ -13,7 +12,7 @@ import org.greenrobot.eventbus.EventBus
  */
 
 
-class CustomTypedMessageHandler :AVIMTypedMessageHandler<AVIMImageMessage>(){
+class CustomTypedMessageHandler : AVIMTypedMessageHandler<AVIMImageMessage>(){
     override fun onMessage(message: AVIMImageMessage?, conversation: AVIMConversation?, client: AVIMClient?) {
         super.onMessage(message, conversation, client)
         val url = message?.fileUrl

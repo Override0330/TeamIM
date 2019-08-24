@@ -3,7 +3,7 @@ package com.override0330.teamim.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cn.leancloud.AVUser
+import com.avos.avoscloud.AVUser
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
@@ -31,7 +31,7 @@ class TaskSelectViewModel :BaseViewModel(){
 
     fun createGroupConversation(list:List<String>): LiveData<String> {
         val data = MutableLiveData<String>()
-        conversationRepository.createConversation(list, AVUser.currentUser().username+"的群聊").observe(lifecycleOwner,
+        conversationRepository.createConversation(list, AVUser.getCurrentUser().username+"的群聊").observe(lifecycleOwner,
             Observer {
                 data.postValue(it)
             })

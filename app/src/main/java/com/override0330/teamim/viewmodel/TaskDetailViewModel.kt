@@ -4,7 +4,6 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cn.leancloud.AVObject
 import com.override0330.teamim.Repository.TaskRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel

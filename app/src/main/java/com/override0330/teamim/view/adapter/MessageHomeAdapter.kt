@@ -8,10 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import cn.leancloud.AVObject
-import cn.leancloud.AVUser
-import cn.leancloud.im.v2.AVIMConversation
 import com.alibaba.fastjson.JSONObject
+import com.avos.avoscloud.im.v2.AVIMConversation
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
@@ -20,8 +18,6 @@ import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.model.bean.NowUser
-import com.override0330.teamim.model.db.AppDatabase
-import com.override0330.teamim.viewmodel.MessageHomeViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList

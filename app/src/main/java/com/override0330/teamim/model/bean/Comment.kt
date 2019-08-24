@@ -1,5 +1,7 @@
 package com.override0330.teamim.model.bean
 
+import java.util.*
+
 /**
  * @data 2019-08-23
  * @author Override0330
@@ -10,4 +12,4 @@ package com.override0330.teamim.model.bean
 class Comment (val userId:String,
                val content:String,
                val superId:String,
-               val time:String)
+               val time:Date)

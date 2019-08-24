@@ -15,6 +15,7 @@ import com.override0330.teamim.R
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.model.bean.Comment
+import java.text.SimpleDateFormat
 
 /**
  * @data 2019-08-23
@@ -45,7 +46,8 @@ class CommentAdapter(val lifecycleOwner: LifecycleOwner): RecyclerView.Adapter<C
                 )).into(holder.avatar)
             holder.username.text = it.getString("username")
         })
-        holder.time.text = comment.time
+        val format = SimpleDateFormat("MM月dd日 HH:mm")
+        holder.time.text = format.format(comment.time)
         holder.content.text = comment.content
         holder.itemView.tag = position
     }

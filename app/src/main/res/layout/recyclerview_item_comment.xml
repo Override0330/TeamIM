@@ -4,7 +4,9 @@
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginTop="1dp">
 
     <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="40dp"
@@ -35,7 +37,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp"
             tools:text="我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了我太难了"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
             tools:text="8月23日 12:16"

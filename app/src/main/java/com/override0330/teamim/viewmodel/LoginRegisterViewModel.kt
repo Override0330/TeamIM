@@ -3,25 +3,17 @@ package com.override0330.teamim.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.leancloud.AVInstallation
-import cn.leancloud.AVObject
-import cn.leancloud.AVUser
-import cn.leancloud.im.v2.AVIMClient
-import cn.leancloud.im.v2.AVIMException
-import cn.leancloud.im.v2.AVIMMessageManager
-import cn.leancloud.im.v2.callback.AVIMClientCallback
-import cn.leancloud.im.v2.messages.AVIMImageMessage
-import cn.leancloud.push.PushService
-import com.override0330.teamim.MainActivity
+import com.avos.avoscloud.*
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.AVIMMessageManager
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
+import com.override0330.teamim.view.MainActivity
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.net.CustomConversationEventHandler
 import com.override0330.teamim.net.CustomMessageHandler
-import com.override0330.teamim.net.ImageMessageHandler
-import com.override0330.teamim.net.LearnCloudNetHelper
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
 
 /**
  * @data 2019-08-15
@@ -36,48 +28,48 @@ class LoginRegisterViewModel : BaseViewModel(){
         val state = MutableLiveData<LoginRegisterState>()
         state.value = LoginRegisterState.WAITING
         //这里是处理逻辑
-        AVUser.logIn(account,password).safeSubscribe(object :io.reactivex.Observer<AVUser>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: AVUser) {
-                with(NowUser.getInstant()){
-                    nowAVuser = t
-                    //直接登录IM服务器
-                    nowClient = AVIMClient.getInstance(t)
-                    nowClient.open(object :AVIMClientCallback(){
-                        override fun done(client: AVIMClient?, e: AVIMException?) {
-                            Log.d("debug","done回调")
-                            if (e == null) {
-                                Log.d("LeanCloud","成功打开IMClient链接")
-                                //设置全局监听
-                                AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
-                                AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
-                                AVIMMessageManager.registerMessageHandler(AVIMImageMessage::class.java,ImageMessageHandler())
-                                AVInstallation.getCurrentInstallation().saveInBackground().subscribe(object :Observer<AVObject>{
-                                    override fun onComplete() {}
-
-                                    override fun onSubscribe(d: Disposable) {}
-
-                                    override fun onNext(t: AVObject) {
-                                        val installationId = AVInstallation.getCurrentInstallation().installationId
-                                        Log.d("installationId",installationId)
+        AVUser.logInInBackground(account,password,object :LogInCallback<AVUser>(){
+            override fun done(user: AVUser?, e: AVException?) {
+                if (e==null){
+                    if (user!=null){
+                        with(NowUser.getInstant()){
+                            nowAVuser = user
+                            //直接登录IM服务器
+                            nowClient = AVIMClient.getInstance(user)
+                            nowClient.open(object : AVIMClientCallback(){
+                                override fun done(client: AVIMClient?, e: AVIMException?) {
+                                    Log.d("debug","done回调")
+                                    if (e == null) {
+                                        Log.d("LeanCloud","成功打开IMClient链接")
+                                        //设置全局监听
+                                        AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
+                                        AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
+//                                        AVIMMessageManager.registerMessageHandler(AVIMImageMessage::class.java,ImageMessageHandler())
+                                        AVInstallation.getCurrentInstallation().saveInBackground(object :SaveCallback(){
+                                            override fun done(e: AVException?) {
+                                                if (e==null){
+                                                    val installationId = AVInstallation.getCurrentInstallation().installationId
+                                                    Log.d("installationId",installationId)
+                                                }else{
+                                                    e.printStackTrace()
+                                                }
+                                            }
+                                        })
+                                        PushService.setDefaultPushCallback(BaseApp.context(),
+                                            MainActivity::class.java)
+                                        state.postValue(LoginRegisterState.SUCCESS)
+                                    }else{
+                                        state.postValue(LoginRegisterState.FAIL)
                                     }
-
-                                    override fun onError(e: Throwable) {}
-                                })
-                                PushService.setDefaultPushCallback(BaseApp.context(),MainActivity::class.java)
-                                state.postValue(LoginRegisterState.SUCCESS)
-                            }
+                                }
+                            })
                         }
-                    })
+                    }else{
+                        state.postValue(LoginRegisterState.FAIL)
+                    }
+                }else{
+                    state.postValue(LoginRegisterState.FAIL)
                 }
-            }
-
-            override fun onError(e: Throwable) {
-                e.printStackTrace()
-                state.postValue(LoginRegisterState.FAIL)
             }
         })
         return state
@@ -89,33 +81,60 @@ class LoginRegisterViewModel : BaseViewModel(){
         //这里是处理逻辑
         val user = AVUser()
         user.username = account
-        user.password = password
-        user.signUpInBackground().safeSubscribe(object :io.reactivex.Observer<AVUser>{
-            override fun onComplete() {}
-            override fun onSubscribe(d: Disposable) {}
-            override fun onNext(t: AVUser) {
-                with(NowUser.getInstant()){
-                    nowAVuser = t
-                    //直接登录IM服务器
-                    nowClient = AVIMClient.getInstance(t)
-                    nowClient.open(object :AVIMClientCallback(){
-                        override fun done(client: AVIMClient?, e: AVIMException?) {
-                            if (e == null) {
-                                Log.d("LeanCloud","成功打开IMClient链接")
-                                LearnCloudNetHelper.getInstant().isLoginToIMClient = true
-                                //设置全局监听
-                                AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
-                                AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
-                                state.postValue(LoginRegisterState.SUCCESS)
+        user.setPassword(password)
+        user.signUpInBackground(object :SignUpCallback(){
+            override fun done(e: AVException?) {
+                if (e==null){
+                    //注册成功，自动登录
+                    AVUser.logIn(account,password)
+                    AVUser.logInInBackground(account,password,object :LogInCallback<AVUser>(){
+                        override fun done(user: AVUser?, e: AVException?) {
+                            if (e==null){
+                                if (user!=null){
+                                    with(NowUser.getInstant()){
+                                        nowAVuser = user
+                                        //直接登录IM服务器
+                                        nowClient = AVIMClient.getInstance(user)
+                                        nowClient.open(object : AVIMClientCallback(){
+                                            override fun done(client: AVIMClient?, e: AVIMException?) {
+                                                Log.d("debug","done回调")
+                                                if (e == null) {
+                                                    Log.d("LeanCloud","成功打开IMClient链接")
+                                                    //设置全局监听
+                                                    AVIMMessageManager.setConversationEventHandler(CustomConversationEventHandler())
+                                                    AVIMMessageManager.registerDefaultMessageHandler(CustomMessageHandler())
+//                                                    AVIMMessageManager.registerMessageHandler(AVIMImageMessage::class.java,ImageMessageHandler())
+                                                    AVInstallation.getCurrentInstallation().saveInBackground(object :SaveCallback(){
+                                                        override fun done(e: AVException?) {
+                                                            if (e==null){
+                                                                val installationId = AVInstallation.getCurrentInstallation().installationId
+                                                                Log.d("installationId",installationId)
+                                                            }else{
+                                                                e.printStackTrace()
+                                                            }
+                                                        }
+                                                    })
+                                                    PushService.setDefaultPushCallback(BaseApp.context(),
+                                                        MainActivity::class.java)
+                                                    state.postValue(LoginRegisterState.SUCCESS)
+                                                }else{
+                                                    state.postValue(LoginRegisterState.FAIL)
+                                                }
+                                            }
+                                        })
+                                    }
+                                }else{
+                                    state.postValue(LoginRegisterState.FAIL)
+                                }
+                            }else{
+                                state.postValue(LoginRegisterState.FAIL)
                             }
                         }
                     })
+                }else{
+                    e.printStackTrace()
+                    state.postValue(LoginRegisterState.FAIL)
                 }
-            }
-            override fun onError(e: Throwable) {
-                //失败
-                e.printStackTrace()
-                state.postValue(LoginRegisterState.FAIL)
             }
         })
         return state

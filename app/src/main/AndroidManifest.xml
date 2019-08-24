@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.override0330.teamim">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -17,9 +18,11 @@
             android:networkSecurityConfig="@xml/freshman_network_security_config"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
-        <service android:name="cn.leancloud.push.PushService"/>
-        <receiver android:name="cn.leancloud.push.AVBroadcastReceiver">
+            tools:replace="android:theme"
+            android:theme="@style/SplashTheme">
+
+        <service android:name="com.avos.avoscloud.PushService"/>
+        <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.USER_PRESENT"/>
@@ -33,19 +36,27 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".view.message.MessageChatActivity"/>
+        <activity android:name=".view.MainActivity"
+                  android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".view.message.MessageChatActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.message.MessageCreateTeamActivity"/>
-        <activity android:name=".view.contact.ContactAddFriendActivity"/>
+        <activity android:name=".view.contact.ContactAddFriendActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.contact.ContactHomeActivity"/>
-        <activity android:name=".view.contact.PersonInformagtionEditActivity"/>
+        <activity android:name=".view.contact.PersonInformagtionEditActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.contact.PersonInformationActivity"/>
         <activity android:name=".view.contact.TeamInformationActivity"/>
-        <activity android:name=".view.contact.TeamInformationEditActivity"/>
-        <activity android:name=".view.task.TaskCreateActivity"/>
+        <activity android:name=".view.contact.TeamInformationEditActivity"
+                  android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".view.task.TaskCreateActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.task.TaskMemberSelectActivity"/>
-        <activity android:name=".view.task.TaskDetailActivity"/>
+        <activity android:name=".view.task.TaskDetailActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.task.TaskCompletedActivity"/>
+        <activity android:name=".view.task.TaskMemberStateActivity"/>
     </application>
 
 </manifest>

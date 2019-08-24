@@ -90,7 +90,7 @@ class TaskCompletedAdapter(val lifecycleOwner: LifecycleOwner): RecyclerView.Ada
             }
             //发起人
             UserRepository.getInstant().getObjectByIdFromNet("_User",task.createdBy).observe(lifecycleOwner, Observer {
-                holder.creator.text = "由"+it.getString("username")+"发布于"+task.createdAt.split('T')[0]
+                holder.creator.text = "由"+it.getString("username")+"发布于"+format.format(task.createdAt)
             })
             holder.over.text = "${task.member.size-task.unDoneMember.size}人已完成"
             //CheckBox点击事件

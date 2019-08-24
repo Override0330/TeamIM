@@ -7,6 +7,6 @@
             android:title="任务"
             android:icon="@drawable/ic_task"/>
     <item android:id="@+id/navigation_square"
-            android:title="广场"
+            android:title="我的"
             android:icon="@drawable/ic_square"/>
 </menu>

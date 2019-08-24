@@ -13,7 +13,10 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:background="@color/colorWhite">
+            android:background="@color/colorWhite"
+            android:layout_marginTop="1dp"
+            android:clickable="true"
+            android:focusable="true">
 
         <ImageView
                 android:id="@+id/iv_item_conversation_avatar"

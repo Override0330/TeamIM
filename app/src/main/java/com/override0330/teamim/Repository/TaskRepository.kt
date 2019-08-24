@@ -3,8 +3,7 @@ package com.override0330.teamim.Repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.leancloud.AVObject
-import cn.leancloud.AVQuery
+import com.avos.avoscloud.*
 import com.override0330.teamim.model.bean.Comment
 import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.model.bean.Task
@@ -34,27 +33,26 @@ class TaskRepository private constructor(){
     fun getTaskList():LiveData<List<Task>>{
         val data = MutableLiveData<List<Task>>()
         val unDoneQuery = AVQuery<AVObject>("Task")
+        unDoneQuery.whereContainedIn("member", listOf(NowUser.getInstant().nowAVuser.objectId))
         unDoneQuery.whereContainedIn("unDoneMember", listOf(NowUser.getInstant().nowAVuser.objectId))
         val createdQuery = AVQuery<AVObject>("Task")
         createdQuery.whereEqualTo("createdBy",NowUser.getInstant().nowAVuser.objectId)
         createdQuery.whereEqualTo("isComplete",false)
         val query = AVQuery.or(listOf(unDoneQuery,createdQuery))
         query.cachePolicy = AVQuery.CachePolicy.NETWORK_ELSE_CACHE
-        query.findInBackground().subscribe(object :Observer<List<AVObject>>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: List<AVObject>) {
-                data.postValue(t.map { Task(it.objectId,it.getString("title"),it.getString("detail"),
-                    it.getDate("ddl"),it.getString("createdBy"),it.getString("createdAt"),
-                    it.getList("member") as ArrayList<String>,it.getList("unDoneMember")as ArrayList<String>
-                )})
-            }
-
-            override fun onError(e: Throwable) {
-                Log.d("获取任务列表","失败")
-                e.printStackTrace()
+        query.findInBackground(object :FindCallback<AVObject>(){
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avException==null){
+                    if (!avObjects.isNullOrEmpty()){
+                        data.postValue(avObjects.map { Task(it.objectId,it.getString("title"),it.getString("detail"),
+                            it.getDate("ddl"),it.getString("createdBy"),it.getDate("createdAt"),
+                            it.getList("member") as ArrayList<String>,it.getList("unDoneMember")as ArrayList<String>
+                        )})
+                    }
+                }else{
+                    Log.d("获取任务列表","失败")
+                    avException.printStackTrace()
+                }
             }
         })
         return data
@@ -65,20 +63,19 @@ class TaskRepository private constructor(){
         val data = MutableLiveData<Task>()
         val query = AVQuery<AVObject>("Task")
         query.whereEqualTo("objectId",taskId)
-        query.firstInBackground.subscribe(object :Observer<AVObject>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: AVObject) {
-                val task = Task(t.objectId,t.getString("title"),t.getString("detail"),
-                    t.getDate("ddl"),t.getString("createdBy"),t.getString("createdAt"),
-                    t.getList("member") as ArrayList<String>, t.getList("unDoneMember") as ArrayList<String>
-                )
-                data.postValue(task)
-            }
-
-            override fun onError(e: Throwable) {
+        query.getFirstInBackground(object :GetCallback<AVObject>(){
+            override fun done(`object`: AVObject?, e: AVException?) {
+                if (e==null){
+                    if (`object`!=null){
+                        val task = Task(`object`.objectId,`object`.getString("title"),`object`.getString("detail"),
+                            `object`.getDate("ddl"),`object`.getString("createdBy"),`object`.getDate("createdAt"),
+                            `object`.getList("member") as ArrayList<String>, `object`.getList("unDoneMember") as ArrayList<String>
+                        )
+                        data.postValue(task)
+                    }
+                }else{
+                    e.printStackTrace()
+                }
 
             }
         })
@@ -90,18 +87,14 @@ class TaskRepository private constructor(){
         val data = MutableLiveData<List<Comment>>()
         val query = AVQuery<AVObject>("Comment")
         query.whereEqualTo("superId",taskId)
-        query.findInBackground().subscribe(object :Observer<List<AVObject>>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: List<AVObject>) {
-                val list = t.map { Comment(it.getString("userId"),it.getString("content"),
-                    it.getString("superId"),it.createdAt) }
-                data.postValue(list)
+        query.findInBackground(object :FindCallback<AVObject>(){
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (!avObjects.isNullOrEmpty()){
+                    val list = avObjects.map { Comment(it.getString("userId"),it.getString("content"),
+                        it.getString("superId"),it.createdAt) }
+                    data.postValue(list)
+                }
             }
-
-            override fun onError(e: Throwable) {}
         })
         return data
     }
@@ -112,17 +105,17 @@ class TaskRepository private constructor(){
         val avObject = AVObject.createWithoutData("Task",task.id)
         task.unDoneMember.remove(NowUser.getInstant().nowAVuser.objectId)
         avObject.put("unDoneMember",task.unDoneMember)
-        avObject.saveInBackground().subscribe(object :Observer<AVObject>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: AVObject) {
-                data.postValue(SendResult.SUCCESS)
-            }
-
-            override fun onError(e: Throwable) {
-                data.postValue(SendResult.FAIL)
+        if (task.unDoneMember.size==0){
+            //如果此时所有人都完成了，则标记为已完成
+            avObject.put("isComplete",true)
+        }
+        avObject.saveInBackground(object :SaveCallback(){
+            override fun done(e: AVException?) {
+                if (e==null){
+                    data.postValue(SendResult.SUCCESS)
+                }else{
+                    data.postValue(SendResult.FAIL)
+                }
             }
         })
         return data
@@ -137,20 +130,20 @@ class TaskRepository private constructor(){
             data.postValue(SendResult.FAIL)
         }else{
             val avObject = AVObject.createWithoutData("Task",task.id)
+            if (task.unDoneMember.size==0){
+                //如果原来是已经完成的，则改变状态
+                avObject.put("isComplete",false)
+            }
             task.unDoneMember.add(userId)
             avObject.put("unDoneMember",task.unDoneMember)
-            avObject.saveInBackground().subscribe(object :Observer<AVObject>{
-                override fun onComplete() {}
-
-                override fun onSubscribe(d: Disposable) {}
-
-                override fun onNext(t: AVObject) {
-                    data.postValue(SendResult.SUCCESS)
-                }
-
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                    data.postValue(SendResult.FAIL)
+            avObject.saveInBackground(object :SaveCallback(){
+                override fun done(e: AVException?) {
+                    if (e==null){
+                        data.postValue(SendResult.SUCCESS)
+                    }else{
+                        e.printStackTrace()
+                        data.postValue(SendResult.FAIL)
+                    }
                 }
             })
         }
@@ -160,31 +153,30 @@ class TaskRepository private constructor(){
     //获取已经完成的任务列表
     fun getCompletedTaskList():LiveData<List<Task>>{
         val data = MutableLiveData<List<Task>>()
-        //参与的，完成的
+        //参与的，完成的，而且不是发布人
         val doneQuery = AVQuery<AVObject>("Task")
         doneQuery.whereContainedIn("member", listOf(NowUser.getInstant().nowAVuser.objectId))
         doneQuery.whereNotContainedIn("unDoneMember", listOf(NowUser.getInstant().nowAVuser.objectId))
-        //创建的，完成的
+        doneQuery.whereNotEqualTo("createdBy",NowUser.getInstant().nowAVuser.objectId)
+        //是发部人，而且已经完成的
         val createdQuery = AVQuery<AVObject>("Task")
         createdQuery.whereEqualTo("createdBy",NowUser.getInstant().nowAVuser.objectId)
         createdQuery.whereEqualTo("isComplete",true)
         val query = AVQuery.or(listOf(doneQuery,createdQuery))
         query.cachePolicy = AVQuery.CachePolicy.NETWORK_ELSE_CACHE
-        query.findInBackground().subscribe(object :Observer<List<AVObject>>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: List<AVObject>) {
-                data.postValue(t.map { Task(it.objectId,it.getString("title"),it.getString("detail"),
-                    it.getDate("ddl"),it.getString("createdBy"),it.getString("createdAt"),
-                    it.getList("member") as ArrayList<String>,it.getList("unDoneMember")as ArrayList<String>
-                )})
-            }
-
-            override fun onError(e: Throwable) {
-                Log.d("获取任务列表","失败")
-                e.printStackTrace()
+        query.findInBackground(object :FindCallback<AVObject>(){
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avException==null){
+                    if (!avObjects.isNullOrEmpty()){
+                        data.postValue(avObjects.map { Task(it.objectId,it.getString("title"),it.getString("detail"),
+                            it.getDate("ddl"),it.getString("createdBy"),it.getDate("createdAt"),
+                            it.getList("member") as ArrayList<String>,it.getList("unDoneMember")as ArrayList<String>
+                        )})
+                    }
+                }else{
+                    Log.d("获取任务列表","失败")
+                    avException.printStackTrace()
+                }
             }
         })
         return data
@@ -198,18 +190,14 @@ class TaskRepository private constructor(){
         comment.put("userId",NowUser.getInstant().nowAVuser.objectId)
         comment.put("superId",taskId)
         comment.put("content",content)
-        comment.saveInBackground().subscribe(object :Observer<AVObject>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: AVObject) {
-                data.postValue(SendResult.SUCCESS)
-            }
-
-            override fun onError(e: Throwable) {
-                e.printStackTrace()
-                data.postValue(SendResult.FAIL)
+        comment.saveInBackground(object :SaveCallback(){
+            override fun done(e: AVException?) {
+                if (e==null){
+                    data.postValue(SendResult.SUCCESS)
+                }else{
+                    e.printStackTrace()
+                    data.postValue(SendResult.FAIL)
+                }
             }
         })
         return data

@@ -2,8 +2,8 @@ package com.override0330.teamim.base
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
-import com.override0330.teamim.OnBackgroundEvent
-import com.override0330.teamim.StartEvent
+import com.override0330.teamim.model.OnBackgroundEvent
+import com.override0330.teamim.model.StartEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

@@ -23,10 +23,14 @@ import kotlinx.android.synthetic.main.fragment_create_group.tv_toolbar_title
 class TaskMemberSelectActivity : BaseViewModelActivity<TaskSelectViewModel>(){
     override val viewModelClass: Class<TaskSelectViewModel>
         get() = TaskSelectViewModel::class.java
+
     val selectList = ArrayList<String>()
+
     lateinit var adapter:MessageCreateGroupAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_create_group)
         tv_toolbar_title.text = "选择执行者"
         tv_create_group.text = "完成选择"

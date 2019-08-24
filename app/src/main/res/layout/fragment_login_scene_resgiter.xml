@@ -29,8 +29,11 @@
     <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_login_account"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:hint="账号"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:background="@drawable/shape_rectangle_white"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             android:layout_marginStart="8dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
@@ -57,11 +60,14 @@
 
     <EditText
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/et_login_password"
             android:hint="密码"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:background="@drawable/shape_rectangle_white"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             android:layout_marginEnd="8dp"
@@ -72,11 +78,14 @@
 
     <EditText
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/et_login_password_again"
             android:hint="再次输入密码"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:background="@drawable/shape_rectangle_white"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             android:layout_marginEnd="8dp"
@@ -113,5 +122,22 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintBottom_toTopOf="@+id/et_login_account"
             app:layout_constraintVertical_chainStyle="packed"/>
+
+    <ProgressBar
+            android:id="@+id/progress_bar_login"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            android:alpha="0"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintVertical_bias="0.038"
+            android:indeterminateTint="#ffffff"/>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

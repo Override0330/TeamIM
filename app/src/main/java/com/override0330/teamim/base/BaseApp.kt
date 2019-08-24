@@ -2,18 +2,9 @@ package com.override0330.teamim.base
 
 import android.app.Application
 import android.content.Context
-import cn.leancloud.AVLogger
-import cn.leancloud.AVOSCloud
-import com.scwang.smartrefresh.layout.header.ClassicsHeader
-import android.R
-import android.R.attr.colorPrimary
-import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
-import cn.leancloud.push.PushService
-import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.scwang.smartrefresh.layout.api.RefreshHeader
-import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator
-import com.scwang.smartrefresh.layout.SmartRefreshLayout
-
+import com.avos.avoscloud.AVLogger
+import com.avos.avoscloud.AVOSCloud
+import com.avos.avoscloud.PushService
 
 
 /**
@@ -27,7 +18,7 @@ class BaseApp : Application(){
     override fun onCreate() {
         super.onCreate()
         baseApp = this
-        AVOSCloud.setLogLevel(AVLogger.Level.DEBUG)
+        AVOSCloud.setLogLevel(AVLogger.LOG_LEVEL_DEBUG)
         AVOSCloud.initialize(this,"pmTb3x39NMc1AUPuTWxNBQDW-gzGzoHsz","q0gUOcGKyhUdKLk6uPDVLt1D")
         PushService.setDefaultChannelId(this,"test")
     }

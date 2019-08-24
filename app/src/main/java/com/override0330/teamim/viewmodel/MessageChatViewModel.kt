@@ -12,7 +12,7 @@
 //import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
 //import cn.leancloud.im.v2.messages.AVIMTextMessage
 //import com.override0330.teamim.AddMessageBoxEvent
-//import com.override0330.teamim.GetResultState
+//import com.override0330.teamim.model.bean.GetResultState
 //import com.override0330.teamim.Repository.MessageRepository
 //import com.override0330.teamim.Repository.UserRepository
 //import com.override0330.teamim.base.BaseViewModel

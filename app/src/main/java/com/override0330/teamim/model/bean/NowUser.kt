@@ -1,9 +1,8 @@
 package com.override0330.teamim.model.bean
 
 import android.util.Log
-import cn.leancloud.AVUser
-import cn.leancloud.im.v2.AVIMClient
-import cn.leancloud.im.v2.AVIMConversation
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.im.v2.AVIMClient
 
 /**
  * @data 2019-08-17
@@ -25,6 +24,6 @@ class NowUser private constructor(){
         }
     }
 
-    lateinit var nowAVuser:AVUser
-    lateinit var nowClient:AVIMClient
+    lateinit var nowAVuser: AVUser
+    lateinit var nowClient: AVIMClient
 }

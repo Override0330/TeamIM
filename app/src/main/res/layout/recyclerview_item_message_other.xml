@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="40dp"
@@ -36,19 +37,17 @@
                 android:id="@+id/linearLayoutCompat4"
                 app:layout_constraintStart_toEndOf="@+id/iv_item_avatar"
                 android:layout_marginStart="8dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_item_message"
+            <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_message_other"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:text="@tools:sample/lorem/random"/>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_item_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:background="@drawable/bg_message_other">
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_item_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:text="@tools:sample/lorem/random"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

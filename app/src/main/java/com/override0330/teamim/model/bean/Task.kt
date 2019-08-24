@@ -15,6 +15,6 @@ class Task(var id:String,
            var detail:String,
            var ddl:Date,
            var createdBy:String,
-           var createdAt:String,
+           var createdAt:Date,
            val member: ArrayList<String>,
            val unDoneMember: ArrayList<String>)

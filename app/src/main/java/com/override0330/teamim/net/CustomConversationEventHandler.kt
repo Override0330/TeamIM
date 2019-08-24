@@ -1,10 +1,10 @@
 package com.override0330.teamim.net
 
 import android.util.Log
-import cn.leancloud.im.v2.AVIMClient
-import cn.leancloud.im.v2.AVIMConversation
-import cn.leancloud.im.v2.AVIMConversationEventHandler
 import com.alibaba.fastjson.JSONObject
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMConversationEventHandler
 
 /**
  * @data 2019-08-18
@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject
  */
 
 
-class CustomConversationEventHandler :AVIMConversationEventHandler(){
+class CustomConversationEventHandler : AVIMConversationEventHandler(){
     override fun onMemberJoined(
         client: AVIMClient?,
         conversation: AVIMConversation?,

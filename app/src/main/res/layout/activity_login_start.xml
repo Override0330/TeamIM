@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_login_motion_layout_start"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/activity_login_motion_scene">
+
+    <androidx.appcompat.widget.AppCompatButton
+            android:text="登录"
+            android:background="@drawable/shape_rectangle_edge"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_login_login"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/et_login_password"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_login_register"
+            android:alpha="0"
+            android:layout_width="0dp"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_login_account"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:hint=" 账号"
+            android:maxLines="1"
+            android:maxLength="15"
+            android:drawableStart="@mipmap/ic_username"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_rectangle_white"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5"
+            app:layout_constraintBottom_toTopOf="@+id/et_login_password"
+            android:alpha="0"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+            android:text="@string/register"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_login_register"
+            android:background="@drawable/shape_rectangle_edge"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_login_login"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:alpha="0"/>
+
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/et_login_password"
+            android:hint=" 密码"
+            android:maxLines="1"
+            android:maxLength="15"
+            android:drawableStart="@mipmap/ic_password"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_rectangle_white"
+            app:layout_constraintTop_toBottomOf="@+id/et_login_account"
+            app:layout_constraintBottom_toTopOf="@+id/btn_login_login"
+            android:alpha="0"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"/>
+
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/et_login_password_again"
+            android:hint=" 再次输入密码"
+            android:maxLines="1"
+            android:maxLength="15"
+            android:alpha="0"
+            android:drawableStart="@mipmap/ic_password"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:background="@drawable/shape_rectangle_white"
+            tools:layout_editor_absoluteY="370dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline"
+            app:layout_constraintGuide_percent="0.1"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline2"
+            app:layout_constraintGuide_percent="0.9"/>
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/bg_message_big"
+            android:id="@+id/imageView5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintVertical_bias="0.47000003"/>
+
+    <ProgressBar
+            android:id="@+id/progress_bar_login"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminateTint="#ffffff"
+            android:alpha="0"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5"
+            android:layout_marginTop="20dp"
+            app:layout_constraintHorizontal_bias="0.498"/>
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

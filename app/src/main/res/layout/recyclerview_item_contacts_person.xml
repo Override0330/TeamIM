@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
                 name="contactUserItem"
                 type="com.override0330.teamim.model.bean.UserItem"/>
@@ -13,7 +14,10 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:background="@color/colorWhite">
+            android:background="@color/colorWhite"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="1dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_item_conversation_avatar"

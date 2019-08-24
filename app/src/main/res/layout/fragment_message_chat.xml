@@ -64,7 +64,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -72,27 +72,39 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_message_image"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="8dp"
-                    android:src="@mipmap/ic_send_image"/>
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/ic_send_image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"/>
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_message_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:background="@drawable/shape_rectangle"/>
+                    android:background="@drawable/shape_rectangle"
+                    app:layout_constraintStart_toEndOf="@id/iv_message_image"
+                    app:layout_constraintEnd_toStartOf="@id/iv_message_send"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_message_send"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_margin="8dp"
-                    android:src="@mipmap/ic_send"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                    android:src="@mipmap/ic_send"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_message_image"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_message_image"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

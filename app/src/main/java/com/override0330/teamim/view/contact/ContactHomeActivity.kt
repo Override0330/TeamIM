@@ -31,6 +31,7 @@ class ContactHomeActivity : BaseViewModelActivity<ContactViewModel>(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_contact_home)
         initView()
     }

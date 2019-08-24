@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cn.leancloud.AVUser
-import cn.leancloud.im.v2.AVIMConversation
-import cn.leancloud.im.v2.AVIMException
-import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback
-import com.override0330.teamim.OnBackgroundEvent
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback
+import com.override0330.teamim.model.OnBackgroundEvent
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
@@ -41,15 +41,17 @@ class ContactViewModel : BaseViewModel(){
         val list = MutableLiveData<List<UserTeam>>()
         userRepository.getGroupListLiveData(userId).observe(lifecycleOwner, Observer {
             Log.d("拿到团队id列表","${it.size}")
-            EventBus.getDefault().postSticky(OnBackgroundEvent{
+            EventBus.getDefault().postSticky(OnBackgroundEvent {
                 list.postValue(it.map {
-                    UserTeam(it.objectId,
+                    UserTeam(
+                        it.objectId,
                         it.getString("conversationId"),
                         it.getString("createdBy"),
                         it.getString("name"),
                         it.getList("member") as List<String>,
                         it.getString("avatar"),
-                        it.getString("detail"))
+                        it.getString("detail")
+                    )
                 })
             })
         })

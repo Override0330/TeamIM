@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.override0330.teamim.base.BaseApp
-import com.override0330.teamim.OnBackgroundEvent
+import com.override0330.teamim.model.OnBackgroundEvent
 import com.override0330.teamim.model.bean.NowUser
 import org.greenrobot.eventbus.EventBus
 
@@ -34,8 +34,8 @@ abstract class AppDatabase:RoomDatabase(){
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             //数据初始化
-                            EventBus.getDefault().postSticky(OnBackgroundEvent{
-                                Log.d("数据库","初始化")
+                            EventBus.getDefault().postSticky(OnBackgroundEvent {
+                                Log.d("数据库", "初始化")
                             })
                         }
 

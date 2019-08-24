@@ -1,7 +1,7 @@
 package com.override0330.teamim.viewmodel
 
 import androidx.lifecycle.LiveData
-import cn.leancloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMConversation
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser

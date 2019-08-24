@@ -3,7 +3,9 @@ package com.override0330.teamim.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cn.leancloud.AVObject
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVObject
+import com.avos.avoscloud.SaveCallback
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.NowUser
@@ -33,20 +35,16 @@ class TaskCreateViewModel :BaseViewModel(){
         task.put("member",member)
         task.put("unDoneMember",member)
         task.put("createdBy", NowUser.getInstant().nowAVuser.objectId)
-        task.saveInBackground().subscribe(object :Observer<AVObject>{
-            override fun onComplete() {}
-
-            override fun onSubscribe(d: Disposable) {}
-
-            override fun onNext(t: AVObject) {
-                Log.d("发布任务","成功")
-                state.postValue(RequestState.SUCCESS)
-            }
-
-            override fun onError(e: Throwable) {
-                Log.d("发布任务","失败")
-                e.printStackTrace()
-                state.postValue(RequestState.FAIL)
+        task.saveInBackground(object :SaveCallback(){
+            override fun done(e: AVException?) {
+                if (e==null){
+                    Log.d("发布任务","成功")
+                    state.postValue(RequestState.SUCCESS)
+                }else{
+                    Log.d("发布任务","失败")
+                    e.printStackTrace()
+                    state.postValue(RequestState.FAIL)
+                }
             }
         })
         return state

@@ -4,14 +4,11 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cn.leancloud.AVUser
-import cn.leancloud.im.v2.AVIMConversation
-import com.override0330.teamim.OnBackgroundEvent
+import com.avos.avoscloud.AVUser
 import com.override0330.teamim.Repository.ConversationRepository
 import com.override0330.teamim.Repository.UserRepository
 import com.override0330.teamim.base.BaseViewModel
 import com.override0330.teamim.model.bean.UserTeam
-import org.greenrobot.eventbus.EventBus
 
 /**
  * @data 2019-08-21

@@ -9,17 +9,15 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cn.leancloud.AVObject
 import com.bigkoo.pickerview.builder.TimePickerBuilder
 import com.bigkoo.pickerview.listener.OnTimeSelectListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.override0330.teamim.R
-import com.override0330.teamim.RefreshTaskListEvent
+import com.override0330.teamim.model.RefreshTaskListEvent
 import com.override0330.teamim.base.BaseApp
 import com.override0330.teamim.base.BaseViewModelActivity
-import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.viewmodel.TaskCreateViewModel
 import kotlinx.android.synthetic.main.activity_create_task.*
 import org.greenrobot.eventbus.EventBus
@@ -43,6 +41,7 @@ class TaskCreateActivity : BaseViewModelActivity<TaskCreateViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_create_task)
         initView()
     }

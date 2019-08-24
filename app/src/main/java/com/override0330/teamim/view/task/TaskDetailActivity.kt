@@ -1,8 +1,10 @@
 package com.override0330.teamim.view.task
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,6 +12,7 @@ import com.override0330.teamim.R
 import com.override0330.teamim.Repository.TaskRepository
 import com.override0330.teamim.base.BaseViewModelActivity
 import com.override0330.teamim.model.bean.Comment
+import com.override0330.teamim.model.bean.NowUser
 import com.override0330.teamim.view.adapter.CommentAdapter
 import com.override0330.teamim.viewmodel.TaskDetailViewModel
 import kotlinx.android.synthetic.main.fragment_task_detail.*
@@ -30,6 +33,7 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_task_detail)
         rv_task_detail.layoutManager = LinearLayoutManager(this)
         val taskId = intent.getStringExtra("taskId")
@@ -44,12 +48,29 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
     fun initView(taskId:String){
         //初始化视图
         viewModel.getTaskById(taskId).observe(this, Observer {task->
+            //初始化任务状态
+            val userId = NowUser.getInstant().nowAVuser.objectId
+            if (!task.member.contains(userId)){
+                //如果不是执行者
+                check_box_task_detail.visibility = View.GONE
+            }else if(task.member.contains(userId)&&!task.unDoneMember.contains(userId)){
+                //如果已经完成任务
+                check_box_task_detail.isChecked = true
+            }
             tv_task_detail_title.text = task.title
             tv_task_detail_detail.text = task.detail
             val format = SimpleDateFormat("MM月dd日 HH:mm")
             tv_task_detail_ddl.text = format.format(task.ddl)+"截止"
             val ddlTimeMillis = task.ddl.time
             val nowTimeMillis = System.currentTimeMillis()
+
+            //跳转到执行人具体执行情况
+            ll_task_detail_member.setOnClickListener {
+                val intent = Intent(this,TaskMemberStateActivity::class.java)
+                intent.putExtra("taskId",taskId)
+                startActivity(intent)
+            }
+
             //计算逾期、剩余
             if (nowTimeMillis>ddlTimeMillis){
                 val hours = ((nowTimeMillis-ddlTimeMillis)/3600000).toInt()
@@ -71,7 +92,7 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
             //显示创建者
             viewModel.getCreatorNameById(task.createdBy).observe(this, Observer {
                 println(task.createdAt)
-                tv_task_detail_creator.text = "创建: $it 于 ${task.createdAt.split('T')[0]}"
+                tv_task_detail_creator.text = "创建: $it 于 ${format.format(task.createdAt)}"
             })
 
             //显示执行者及执行情况
@@ -82,12 +103,7 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
             tv_task_detail_done_member.text = "$alreadyDone/${task.member.size}完成"
 
             //讨论版块的初始化
-            viewModel.getCommentList(task.id).observe(this, Observer {
-                val arrayList = ArrayList<Comment>()
-                arrayList.addAll(it)
-                adapter.submitList(arrayList)
-                rv_task_detail.adapter = adapter
-            })
+            refreshComment(task.id)
 
             //发送评论的点击事件
             iv_task_detail_send.setOnClickListener {
@@ -98,7 +114,7 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
                             TaskRepository.SendResult.SUCCESS -> {
                                 Toast.makeText(this,"评论成功",Toast.LENGTH_SHORT).show()
                                 //实时更新？算了直接刷新recyclerview吧
-
+                                refreshComment(task.id)
                             }
                             TaskRepository.SendResult.FAIL -> {
                                 Toast.makeText(this,"评论失败，检查网路连接",Toast.LENGTH_SHORT).show()
@@ -136,6 +152,15 @@ class TaskDetailActivity :BaseViewModelActivity<TaskDetailViewModel>(){
                     })
                 }
             }
+        })
+    }
+
+    private fun refreshComment(taskId: String){
+        viewModel.getCommentList(taskId).observe(this, Observer {
+            val arrayList = ArrayList<Comment>()
+            arrayList.addAll(it)
+            adapter.submitList(arrayList)
+            rv_task_detail.adapter = adapter
         })
     }
 

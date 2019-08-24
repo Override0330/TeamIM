@@ -5,7 +5,9 @@
                                                    android:orientation="vertical"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="80dp"
-        android:background="@color/white">
+                                                   android:background="@color/white"
+                                                   android:clickable="true"
+                                                   android:focusable="true">
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_item_team_avatar"
@@ -17,7 +19,7 @@
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline7"
-            />
+            app:layout_goneMarginTop="1dp"/>
 
     <androidx.constraintlayout.widget.Guideline
             android:orientation="vertical"

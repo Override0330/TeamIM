@@ -28,6 +28,7 @@ class MessageCreateTeamActivity : BaseViewModelActivity<MessageCreateTeamViewMod
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.fragment_create_group)
         initView()
     }
