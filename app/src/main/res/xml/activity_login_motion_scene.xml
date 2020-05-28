@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Transition
+            app:constraintSetStart="@layout/activity_login_start"
+            app:constraintSetEnd="@layout/activity_login_login"
+            app:duration="1000">
+    </Transition>
+
+    <Transition
+            app:constraintSetStart="@layout/activity_login_login"
+            app:constraintSetEnd="@layout/activity_login_register"
+            app:duration="1000">
+    </Transition>
+
+</MotionScene>

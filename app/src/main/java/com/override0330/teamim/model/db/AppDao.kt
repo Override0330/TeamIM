@@ -1,8 +1,10 @@
 package com.override0330.teamim.model.db
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 /**
@@ -14,22 +16,45 @@ import androidx.room.Query
 @Dao
 interface AppDao {
     //增
-    @Insert
-    fun insertTask(task: Task)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertMessage(messageDB: MessageDB)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertMessage(messageDB: List<MessageDB>)
 
     @Insert
-    fun insertTask(taskList: List<Task>)
+    fun insertUser(userDB: UserDB)
 
     @Insert
-    fun insertMessage(message: Message)
+    fun insertUser(userDBList: List<UserDB>)
 
-    @Insert
-    fun insertMessage(message: List<Message>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertContact(user: List<ContactDB>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertContact(user: ContactDB)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertConversation(conversationDB: ConversationDB)
+
 
     //查
-    @Query("SELECT * FROM task_item ")
-    fun getAllTask():DataSource.Factory<Int,Task>
+    @Query("SELECT * FROM message WHERE conversationId =:conversationId ORDER BY timestamp ASC")
+    fun getAllMessageById(conversationId:String):LiveData<List<MessageDB>>
 
-    @Query("SELECT * FROM message")
-    fun getAllMessage():DataSource.Factory<Int,Message>
+    @Query("SELECT * FROM conversation")
+    fun getAllConversation():List<ConversationDB>
+
+    @Query("SELECT * FROM conversation WHERE conversationId =:id")
+    fun getConversationById(id:String):ConversationDB
+
+    @Query("SELECT * FROM contact")
+    fun getAllContactDataSource():DataSource.Factory<Int,ContactDB>
+
+    @Query("SELECT * FROM contact")
+    fun getAllContactList():LiveData<List<ContactDB>>
+
+    @Query("SELECT * FROM contact WHERE userId =:userId")
+    fun getUserFromContactById(userId:String):ContactDB
+
 }

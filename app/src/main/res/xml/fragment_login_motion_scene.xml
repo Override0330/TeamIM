@@ -5,8 +5,15 @@
             app:constraintSetEnd="@layout/fragment_login_scene_login"
             app:duration="1000">
         <OnClick
-                app:clickAction="toggle"
-                app:targetId="@id/btn_login_login"/>
+                app:targetId="@+id/imageView5"
+                app:clickAction="transitionToEnd">
+        </OnClick>
+    </Transition>
+
+    <Transition
+            app:constraintSetStart="@layout/fragment_login_scene_login"
+            app:constraintSetEnd="@layout/fragment_login_scene_resgiter"
+            app:duration="1000">
     </Transition>
 
 </MotionScene>

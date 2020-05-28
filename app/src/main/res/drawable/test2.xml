@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="fill">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorLitterGray"/>
+        </shape>
+    </item>
+    <item android:gravity="center"
+            android:bottom="25dp">
+        <bitmap
+                android:gravity="center"
+                android:src="@drawable/bg_message_big"/>
+    </item>
+</layer-list>

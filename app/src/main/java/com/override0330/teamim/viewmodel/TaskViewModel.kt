@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.override0330.teamim.model.bean.TaskItem
+import com.override0330.teamim.Repository.TaskRepository
+import com.override0330.teamim.base.BaseViewModel
+import com.override0330.teamim.model.bean.Task
 import com.override0330.teamim.model.db.AppDatabase
-import com.override0330.teamim.model.db.Task
 
 /**
  * @data 2019-08-15
@@ -15,14 +16,10 @@ import com.override0330.teamim.model.db.Task
  */
 
 
-class TaskViewModel :BaseViewModel(){
+class TaskViewModel : BaseViewModel(){
+    private val taskRepository = TaskRepository.getInstant()
 
-    private val database = AppDatabase.getInstant()
+    fun getUndoneTaskList():LiveData<List<Task>> = taskRepository.getTaskList()
 
-    fun getRefreshLiveData(): LiveData<PagedList<Task>> =
-        LivePagedListBuilder(database.appDao().getAllTask(), PagedList.Config.Builder()
-            .setPageSize(5)                         //配置分页加载的数量
-            .setEnablePlaceholders(false)     //配置是否启动PlaceHolders
-            .setInitialLoadSizeHint(5)              //初始化加载的数量
-            .build()).build()
+    fun completeTask(task:Task):LiveData<TaskRepository.SendResult> = taskRepository.completeTaskById(task)
 }
